@@ -204,3 +204,19 @@ export const profileUser = async (req, res) => {
     return res.status(500).json({ message: "Internal server error", error });
   }
 };
+
+export const getChechAuthentication = async (req, res) => {
+  const loginUser = req.user;
+  try {
+    console.log(loginUser);
+    const loginUserVerify = await Admin.findById(loginUser._id);
+    if (!loginUserVerify) {
+      return res.status(400).json({
+        message: "User is not Authentic. Plese Signup And login first",
+      });
+    }
+    res.status(200).json({ message: "User is Authentic" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
