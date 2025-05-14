@@ -81,15 +81,14 @@ export const OrderSuccess = () => {
     (order) => order.status === "delivered"
   );
 
+  console.log(completedOrders)
+
   return (
     <div className="w-[98%] mx-auto flex flex-col items-center justify-center bg-green-50 p-4">
       {user && Array.isArray(orders) && orders.length > 0 ? (
         <div className="space-y-4">
           {/* Display Incomplete Orders (Default) */}
-          {incompleteOrders.length > 0 ? (
-            incompleteOrders.map((order, index) => (
-              <div key={null}>
-                <div className="text-center flex flex-col justify-center items-center">
+          {incompleteOrders.length > 0?(<div className="text-center flex flex-col justify-center items-center">
                   <CheckCircle className="text-green-500 w-15 h-15 mb-4" />
                   <h1 className="text-xl font-bold text-green-700 mb-2">
                     Order Placed Successfully!
@@ -97,7 +96,11 @@ export const OrderSuccess = () => {
                   <p className="text-gray-600 mb-6 text-center max-w-md">
                     Thank you for your order. Here are your order details:
                   </p>
-                </div>
+                </div>):null}
+          {incompleteOrders.length > 0 ? (
+            incompleteOrders.map((order, index) => (
+              <div key={index}>
+                
                 <details
                   key={order._id}
                   className={`border border-gray-300 rounded-xl p-4 gap-4 shadow-md bg-white transition-all`}
