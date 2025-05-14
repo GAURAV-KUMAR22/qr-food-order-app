@@ -22,15 +22,15 @@ export const Login = () => {
     if (!emailRegex.test(form.email)) {
       formError.email = "Email is required and must me correct";
     }
-
     const passwordRezax =
-      /(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*-+].{8,})+$/;
+      /(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@*$%&+=!]).{8,}$/;
 
-    // if (!passwordRezax.test(form.password)) {
-    //   formError.password =
-    //     "Password must be Atleat one Uppercase later and one lowerCase and one symbol";
-    // }
+    if (!passwordRezax.test(form.password)) {
+      formError.password =
+        "Password must be Atleat one Uppercase later and one lowerCase and one symbol";
+    }
     setErrors(formError);
+
     return Object.keys(formError).length === 0;
   };
 

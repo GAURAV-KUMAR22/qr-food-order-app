@@ -27,6 +27,8 @@ import { CategoryView } from "./Pages/Admin/CategoryView";
 import { TodayOrderStat } from "./Pages/Admin/TodayOrderStat";
 import { io } from "socket.io-client";
 import { useAuth } from "../Context/AuthProvider";
+import LoadingIcons from "react-loading-icons";
+import { Bars } from "react-loading-icons";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 console.log(backendUrl);
 const socket = io(backendUrl);
@@ -59,7 +61,13 @@ function App() {
         className="hidden"
       />
       <ScrollToTop />
-      <Suspense fallback={<p>Loading page...</p>}>
+      <Suspense
+        fallback={
+          <div className="w-[100%] mx-auto justify-center items-center flex">
+            <LoadingIcons.Bars />
+          </div>
+        }
+      >
         <Routes className="min-w-[375px] h-auto">
           <Route index path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />

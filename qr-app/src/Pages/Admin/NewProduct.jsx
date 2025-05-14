@@ -10,13 +10,11 @@ export const NewProduct = () => {
   const [picture, setPicture] = useState(null);
   const [preview, setPreview] = useState(null);
   const [showImage, setShowImage] = useState(true);
-  const [image, setImage] = useState();
+  const [image, setImageUrl] = useState();
   const navigate = useNavigate();
-  // console.log(image)
+  const [error, setErrors] = useState({});
   const location = useLocation();
-
   let product = location?.state?.product;
-  console.log("products", product);
 
   const [form, setForm] = useState({
     name: "",
@@ -25,8 +23,35 @@ export const NewProduct = () => {
     price: "",
     quantity: "",
   });
-  console.log("categorueue", form);
 
+  // validate inputs
+  const validateInput = async () => {
+    const formError = {};
+
+    if (!product.imageUrl && !picture) {
+      formError.picture = "Image Field is required";
+    }
+    if (!form.name) {
+      formError.name = "Name Field is required";
+    }
+    if (!form.description) {
+      formError.description = "Description Field is required";
+    }
+    if (!form.category) {
+      formError.category = "Category Field is required";
+    }
+    if (!form.price) {
+      formError.price = "Price Field is required";
+    }
+    if (!form.quantity) {
+      formError.quantity = "Quantity Field is required";
+    }
+
+    setErrors(formError);
+    return Object.keys(formError).length === 0;
+  };
+
+  // Edit product value
   useEffect(() => {
     if (product) {
       setForm({
@@ -39,6 +64,7 @@ export const NewProduct = () => {
     }
   }, [product]);
 
+  // Fetch Category
   useEffect(() => {
     const controler = new AbortController();
     async function fetched() {
@@ -57,15 +83,17 @@ export const NewProduct = () => {
     };
   }, []);
 
+  // setImageUrl and  setPicutreDetails
   const handleImage = (e) => {
     const file = e.target.files[0];
     if (file) {
       setPicture(file);
       const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
+      setImageUrl(imageUrl);
     }
   };
 
+  // Form save in the form state
   const handleForm = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({
@@ -74,42 +102,44 @@ export const NewProduct = () => {
     }));
   };
 
+  // post request for new Product save
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    let data = new FormData();
-    data.append("picture", picture); // match backend field
-    data.append("name", form.name);
-    data.append("description", form.description);
-    data.append("category", form.category);
-    data.append("price", form.price);
-    data.append("quantity", form.quantity);
-    console.log(data);
-    const responce = product
-      ? await PrivateAxios.put(`/products/${product._id}`, data, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-      : await PrivateAxios.post("/products/new-product", data, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+    const isValidate = await validateInput();
+    if (isValidate) {
+      let data = new FormData();
+      data.append("picture", picture); // match backend field
+      data.append("name", form.name);
+      data.append("description", form.description);
+      data.append("category", form.category);
+      data.append("price", form.price);
+      data.append("quantity", form.quantity);
+      console.log(data);
+      const responce = product
+        ? await PrivateAxios.put(`/products/${product._id}`, data, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+        : await PrivateAxios.post("/products/new-product", data, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+      if (responce.status === 201 || responce.status === 200) {
+        setForm({
+          name: "",
+          description: "",
+          category: "",
+          price: "",
         });
-    console.log(responce);
-    if (responce.status === 201 || responce.status === 200) {
-      setForm({
-        name: "",
-        description: "",
-        category: "",
-        price: "",
-      });
-      setPicture(null);
-
-      navigate("/admin");
+        setPicture(null);
+        navigate("/admin");
+      }
     }
   };
 
+  // for All filed reset
   const handleDiscard = () => {
     setForm({
       productName: "",
@@ -122,8 +152,8 @@ export const NewProduct = () => {
     navigate("/admin");
   };
 
+  // uploaded imaged toggle
   function handlePreviewImage() {
-    console.log("click");
     if (picture) {
       const imageUrl = URL.createObjectURL(picture);
       console.log(imageUrl);
@@ -132,6 +162,7 @@ export const NewProduct = () => {
     }
   }
 
+  // Delete specifc product
   async function handleDelete(productId) {
     const responce = await publicAxios.delete(`/products/${productId}`);
     if (responce.status === 200) {
@@ -145,28 +176,28 @@ export const NewProduct = () => {
         <ReverseButton routeName={"Add Product"} route={"/admin"} />
       </div>
 
-      {/* {preview && showImage && (
-          <Model
-            children={
-              <img
-                src={preview}
-                alt="Preview"
-                className="w-64 h-64 object-cover rounded-md border mb-4"
-              />
-            }
-            onClose={() => setShowImage(false)}
-          />
-        )} */}
+      {preview && showImage && (
+        <Model
+          children={
+            <img
+              src={preview}
+              alt="Preview"
+              className="w-64 h-64 object-cover rounded-md border mb-4"
+            />
+          }
+          onClose={() => setShowImage(false)}
+        />
+      )}
 
       {/* Form fields */}
-      <div className="w-[98%] sm:w-[50%] sm:mx-auto mx-auto">
+      <div className="w-[98%] sm:w-[50%] sm:mx-auto mx-2">
         <div className="w-full flex flex-col mx-auto sm:w-[70%]">
           <div className="flex flex-col mx-auto w-full sm:flex-row  justify-between gap-4 lg:items-center">
             <div className="flex justify-start items-center">
               <div className="mr-5">
                 <label htmlFor="file-upload" className="cursor-pointer">
                   <div className=" bg-gray-600 w-[50px] h-[50px] object-contain rounded-full items-center justify-center flex ">
-                    {image ? (
+                    {image && picture ? (
                       <img
                         src={image}
                         alt="file upload"
@@ -174,7 +205,9 @@ export const NewProduct = () => {
                       />
                     ) : product ? (
                       <img
-                        src={`${import.meta.env.VITE_BACKEND_URL}/${product.imageUrl}`}
+                        src={`${import.meta.env.VITE_BACKEND_URL}/${
+                          product.imageUrl
+                        }`}
                         alt="file upload"
                         className="w-[50px] h-[50px] object-cover rounded-full"
                       />
@@ -191,6 +224,11 @@ export const NewProduct = () => {
                   onChange={handleImage}
                   required
                 />
+                {error.picture && (
+                  <p className="text-red-800 w-[98%] mx-auto">
+                    {error.picture}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col mx-auto my-auto sm:flex-row gap-2">
                 <button
@@ -199,20 +237,22 @@ export const NewProduct = () => {
                 >
                   {picture && picture.name ? picture.name : "Uploaded Image"}
                 </button>
-                <button
-                  className="bg-[#F9D718] p-1  flex font-light items-center justify-center text-center rounded-md  overflow-y-hidden"
-                  onClick={() => setPicture(null)}
-                  type="button"
-                >
-                  Discard
-                </button>
-                <div className="bg-red-700 p-1  flex font-light items-center justify-center text-center rounded-md overflow-y-hidden">
-                  {product && (
+                {picture && (
+                  <button
+                    className="bg-[#F9D718] p-1  flex font-light items-center justify-center text-center rounded-md  overflow-y-hidden"
+                    onClick={() => setPicture(null)}
+                    type="button"
+                  >
+                    Discard
+                  </button>
+                )}
+                {product && (
+                  <div className="bg-red-700 p-1  flex font-light items-center justify-center text-center rounded-md overflow-y-hidden">
                     <button onClick={() => handleDelete(product._id)}>
                       Delete
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -229,6 +269,9 @@ export const NewProduct = () => {
               required
               className="bg-[#F9F9F9] min-h-[40px] px-2"
             />
+            {error.name && (
+              <p className="text-red-800 w-[98%] mx-auto">{error.name}</p>
+            )}
           </div>
 
           <div className="w-full h-[67px] flex flex-col m-1">
@@ -242,6 +285,11 @@ export const NewProduct = () => {
               required
               className="bg-[#F9F9F9] min-h-[40px] px-2"
             />
+            {error.description && (
+              <p className="text-red-800 w-[98%] mx-auto">
+                {error.description}
+              </p>
+            )}
           </div>
 
           <div className="w-full h-[67px] flex flex-col m-1">
@@ -253,6 +301,9 @@ export const NewProduct = () => {
               value={form.category} // Ensure the select value is controlled by form.state
               required
             >
+              {error.category && (
+                <p className="text-red-800 w-[98%] mx-auto">{error.category}</p>
+              )}
               {/* "Choose Category" option */}
               <option value={product?.categoryId?.name}>
                 {product ? product.categoryId?.name : "choose Category"}
@@ -278,6 +329,9 @@ export const NewProduct = () => {
               required
               className="bg-[#F9F9F9] min-h-[40px] px-2"
             />
+            {error.quantity && (
+              <p className="text-red-800 w-[98%] mx-auto">{error.quantity}</p>
+            )}
           </div>
           <div className="w-full h-[67px] mb-15 flex flex-col m-1">
             <label className="min-h-5">Prices (Rs.)</label>
@@ -290,6 +344,9 @@ export const NewProduct = () => {
               required
               className="bg-[#F9F9F9] min-h-[40px] px-2"
             />
+            {error.price && (
+              <p className="text-red-800 w-[98%] mx-auto">{error.price}</p>
+            )}
           </div>
           <div className="w-full flex justify-between min-h-[48px] mt-28 fixed bottom-2 left-0 right-0 bg-white shadow-md px-4 gap-4">
             <button
