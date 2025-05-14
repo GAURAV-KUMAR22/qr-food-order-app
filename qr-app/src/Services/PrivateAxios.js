@@ -5,28 +5,22 @@ const PrivateAxios = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true,
+  withCredentials: true, // ✅ Required for sending cookies with requests
 });
-PrivateAxios.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token"); // or get from context/store
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+
+// ✅ No need to manually add Authorization header for cookies
+// Remove request interceptor
 
 PrivateAxios.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Handle token expiry or redirect to login
-      console.warn("Unauthorized, redirecting to login...");
-      // window.location.href = '/login'; // if needed
+    if (error.response?.status === 401) {
+      console.warn("Unauthorized. Possibly invalid or expired session.");
+      // Optional: redirect to login or clear local app state
+      // window.location.href = "/login";
     }
     return Promise.reject(error);
   }
 );
+
 export default PrivateAxios;

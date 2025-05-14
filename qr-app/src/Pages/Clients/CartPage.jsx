@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { incrementCart, removeFromCart } from "../../Redux/Cart";
 import { ReverseButton } from "../../components/Client/ReverseButton";
+import publicAxios from "../../Services/PublicAxios";
+import { socket } from "../../Services/Socket";
 
 export const CartPage = () => {
   const cartstate = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
+  const [fetchedProduct, setProducts] = useState([]);
 
   const total = Array.isArray(cartstate)
     ? cartstate.reduce(
@@ -15,12 +18,33 @@ export const CartPage = () => {
       )
     : 0;
 
+  useEffect(() => {
+    socket.emit("join-admin");
+    const fetchData = async () => {
+      try {
+        const responce = await publicAxios.get("/products");
+        if (responce.status !== 200) {
+          throw new Error({ message: "responce failed" });
+        }
+        setProducts(responce.data.data); // Set fetched data
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   function handleMinusQuanity(id) {
     dispatch(removeFromCart(id));
   }
 
   function handlePlusQuantity(id) {
-    dispatch(incrementCart(id));
+    const cartProduct = cartstate.find((item) => item._id === id);
+    const product = fetchedProduct.find((item) => item._id === cartProduct._id);
+    console.log(product);
+    if (cartProduct.quantity < product.quantity) {
+      dispatch(incrementCart(id));
+    }
   }
 
   return (
@@ -77,7 +101,7 @@ export const CartPage = () => {
                   </span>
 
                   <button
-                    onClick={() => handlePlusQuantity(item._id)}
+                    onClick={() => handlePlusQuantity(item._id, item)}
                     className="p-1"
                   >
                     <img

@@ -98,7 +98,10 @@ export const Home = () => {
   ];
 
   const addToCarts = async (product) => {
-    dispatch(addToCart(product));
+    console.log("rpoductQunatutu", product.quantity);
+    if (product.quantity > 0) {
+      dispatch(addToCart(product));
+    }
   };
 
   // Calculate total quantity in cart
@@ -312,6 +315,7 @@ export const Home = () => {
                     image={product.imageUrl}
                     onAddToCart={() => addToCarts(product)}
                     product={product}
+                    stock={product.quantity ? product.quantity : 0}
                   />
                 </div>
               ))}
