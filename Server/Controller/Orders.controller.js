@@ -25,7 +25,7 @@ export const activeOrders = async (req, res) => {
     })
       .populate("userId")
       .populate("items.productId");
-    ("pendinds processs", orders);
+    "pendinds processs", orders;
     res.status(200).json({ content: orders });
   } catch (error) {
     res.status(500).json({ message: "Internal Server error", error });
@@ -33,31 +33,34 @@ export const activeOrders = async (req, res) => {
 };
 
 export const getTodayOrders = async (req, res) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to today's midnight (start of the day)
-    
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set to today's midnight (start of the day)
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
 
   try {
     const todayOrders = await Order.find({
-        placedAt:{
-            $gte:today,
-            $lt:tomorrow
-        }
-    }).populate('userId').populate("items.productId");
-    res.status(200).json({content:todayOrders})
+      placedAt: {
+        $gte: today,
+        $lt: tomorrow,
+      },
+    })
+      .populate("userId")
+      .populate("items.productId");
+    res.status(200).json({ content: todayOrders });
   } catch (error) {
-    res.status(500).json({message:'Internal server error',error})
+    res.status(500).json({ message: "Internal server error", error });
   }
 };
-
 export const postOrder = async (req, res) => {
   const { items, totalAmount, tax, deliveryCharge, userId, paymentMethod } =
     req.body;
+
   if (!items || !totalAmount) {
     return res.status(400).json({ message: "Items not found" });
   }
+
   try {
     const newOrder = new Order({
       userId: userId,
@@ -67,34 +70,73 @@ export const postOrder = async (req, res) => {
     });
     await newOrder.save();
 
+    // Update the quantities of the products in the inventory
+    try {
+      console.log(items);
+      if (items.length > 0) {
+        // Use Promise.all to handle multiple async operations
+        const updatePromises = items.map((item) => {
+          console.log(item.productId);
+          return Product.findByIdAndUpdate(
+            item.productId,
+            { $inc: { quantity: -item.quantity } }, // Decrease quantity
+            { new: true }
+          );
+        });
+
+        // Wait for all product updates to complete
+        await Promise.all(updatePromises);
+      }
+    } catch (error) {
+      console.log("Error updating product quantities:", error);
+      return res
+        .status(500)
+        .json({ message: "Error updating product quantities" });
+    }
+
+    // Remove items from the cart after successful order placement
     await Cart.deleteOne({ userId: userId });
+
     res
       .status(201)
-      .json({ massage: "Order successfully placed", order: newOrder });
+      .json({ message: "Order successfully placed", order: newOrder });
   } catch (error) {
+    console.log("Internal server error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
 export const updateOrder = async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body;
-  const { productIds } = req.body;
-  (typeof productIds);
-  ("productsQuqntity", productIds);
+  const { status, productIds } = req.body;
+
   if (!id) {
     return res.status(400).json({ message: "OrderId is not found" });
   }
+
   try {
-    const order = await Order.findByIdAndUpdate(id, {
-      $set: { status: status },
-    });
+    // Find and update the order status
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { $set: { status: status } },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
     if (status === "delivered") {
+      // Increment total orders and revenue for "delivered" status
       const newSale = new Sales({
-        totelOrders: +1,
-        totelRevenue: +order.totalAmount,
+        totelOrders: 1, // Correct increment
+        totelRevenue: order.totalAmount, // Correct revenue
       });
       await newSale.save();
+    }
+
+    if (status === "cancelled" && productIds && productIds.length > 0) {
+      // Update product quantities for "cancelled" status
       try {
         await Promise.all(
           productIds.map(async (item) => {
@@ -104,7 +146,7 @@ export const updateOrder = async (req, res) => {
             if (prodId && typeof orderedQty === "number") {
               await Product.findByIdAndUpdate(
                 prodId,
-                { $inc: { quantity: -orderedQty } },
+                { $inc: { quantity: orderedQty } }, // Increase quantity
                 { new: true }
               );
             } else {
@@ -112,13 +154,16 @@ export const updateOrder = async (req, res) => {
             }
           })
         );
-        ("All quantities updated successfully");
+        console.log("All quantities updated successfully");
       } catch (error) {
         console.error("Error updating stock:", error);
+        return res.status(500).json({ message: "Error updating stock" });
       }
     }
-    res.status(200).json({ message: "Order updated" });
+
+    res.status(200).json({ message: "Order updated successfully", order });
   } catch (error) {
+    console.error("Error updating order:", error);
     res.status(500).json({ message: "Internal server error", error });
   }
 };
@@ -127,19 +172,19 @@ export const getOrder = async (req, res) => {
   const userId = req.params.id;
 
   const startOfDay = new Date();
-startOfDay.setHours(0, 0, 0, 0);
+  startOfDay.setHours(0, 0, 0, 0);
 
-const endOfDay = new Date();
-endOfDay.setHours(23, 59, 59, 999);
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
 
   try {
     const order = await Order.find({
       userId: userId,
-      placedAt: { $gte: startOfDay, $lte: endOfDay }
+      placedAt: { $gte: startOfDay, $lte: endOfDay },
     })
-    .populate("userId")
-    .populate("items.productId");
-    
+      .populate("userId")
+      .populate("items.productId");
+
     if (!order) {
       return res.status(400).json(null);
     }
