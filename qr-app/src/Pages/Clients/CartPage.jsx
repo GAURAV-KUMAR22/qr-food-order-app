@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { incrementCart, removeFromCart } from "../../Redux/Cart";
+import {
+  incrementCart,
+  removeFromCart,
+  updateQuantity,
+  clearCart,
+} from "../../Redux/Cart";
 import { ReverseButton } from "../../components/Client/ReverseButton";
 import publicAxios from "../../Services/PublicAxios";
 import { socket } from "../../Services/Socket";
@@ -13,7 +18,10 @@ export const CartPage = () => {
 
   const total = Array.isArray(cartstate)
     ? cartstate.reduce(
-        (acc, item) => acc + Number(item.price) * Number(item.quantity),
+        (acc, item) =>
+          acc +
+          Number(item.price ? item.price : 0) *
+            Number(item.quantity ? item.quantity : 0),
         0
       )
     : 0;
@@ -33,6 +41,24 @@ export const CartPage = () => {
     };
     fetchData();
   }, []);
+  console.log(cartstate);
+
+  useEffect(() => {
+    cartstate.forEach((cartItem) => {
+      const product = fetchedProduct.find((item) => item._id === cartItem._id);
+      if (product) {
+        if (cartItem.quantity > product.quantity) {
+          console.log(
+            `Available stock: ${product.quantity}, In cart: ${cartItem.quantity}`
+          );
+          localStorage.removeItem("cart");
+          dispatch(
+            updateQuantity({ id: cartItem._id, quantity: product.stock })
+          );
+        }
+      }
+    });
+  }, [cartstate, fetchedProduct]);
 
   function handleMinusQuanity(id) {
     dispatch(removeFromCart(id));
@@ -42,6 +68,7 @@ export const CartPage = () => {
     const cartProduct = cartstate.find((item) => item._id === id);
     const product = fetchedProduct.find((item) => item._id === cartProduct._id);
     console.log(product);
+
     if (cartProduct.quantity < product.quantity) {
       dispatch(incrementCart(id));
     }
@@ -64,56 +91,63 @@ export const CartPage = () => {
 
       <div className=" mt-2 m-2 overflow-y-scroll">
         {Array.isArray(cartstate) &&
-          cartstate.map((item) => (
-            <div
-              key={item._id}
-              className="flex justify-between items-center rounded-xl shadow mb-4 p-1"
-            >
-              <div className="left text-xl space-y-1">
-                <h4 className=" inline text-base font-semibold">{item.name}</h4>
-                <p className="text-sm text-gray-600 mb-4">{item.description}</p>
-                <b className="text-black mt-[20px] font-bold">
-                  Rs. {item.price}/-
-                </b>
-              </div>
+          cartstate.map(
+            (item) =>
+              item.quantity && (
+                <div
+                  key={item._id}
+                  className="flex justify-between items-center rounded-xl shadow mb-4 p-1"
+                >
+                  <div className="left text-xl space-y-1">
+                    <h4 className=" inline text-base font-semibold">
+                      {item.name}
+                    </h4>
+                    <p className="text-sm text-gray-600 mb-4">
+                      {item.description}
+                    </p>
+                    <b className="text-black mt-[20px] font-bold">
+                      Rs. {item.price}/-
+                    </b>
+                  </div>
 
-              <div className="right flex flex-col items-center gap-2">
-                <img
-                  src="/assets/pizza.png"
-                  alt="pizza"
-                  className="w-[85px] h-[64px] object-cover rounded-md"
-                />
-
-                <div className="flex items-center justify-between w-[120px] h-[32px] rounded-md mt-6 bg-yellow-300 mr-2">
-                  <button
-                    onClick={() => handleMinusQuanity(item._id)}
-                    className="p-1"
-                  >
+                  <div className="right flex flex-col items-center gap-2">
                     <img
-                      src="/assets/minus.png"
-                      alt="minus"
-                      className="w-4 h-4 object-cover"
+                      src="/assets/pizza.png"
+                      alt="pizza"
+                      className="w-[85px] h-[64px] object-cover rounded-md"
                     />
-                  </button>
 
-                  <span className="text-base font-semibold">
-                    {item.quantity || item.qty}
-                  </span>
+                    <div className="flex items-center justify-between w-[120px] h-[32px] rounded-md mt-6 bg-yellow-300 mr-2">
+                      <button
+                        onClick={() => handleMinusQuanity(item._id)}
+                        className="p-1"
+                      >
+                        <img
+                          src="/assets/minus.png"
+                          alt="minus"
+                          className="w-4 h-4 object-cover"
+                        />
+                      </button>
 
-                  <button
-                    onClick={() => handlePlusQuantity(item._id, item)}
-                    className="p-1"
-                  >
-                    <img
-                      src="/assets/plus.png"
-                      alt="plus"
-                      className="w-4 h-4 object-cover"
-                    />
-                  </button>
+                      <span className="text-base font-semibold">
+                        {item.quantity ? item.quantity : 0}
+                      </span>
+
+                      <button
+                        onClick={() => handlePlusQuantity(item._id, item)}
+                        className="p-1"
+                      >
+                        <img
+                          src="/assets/plus.png"
+                          alt="plus"
+                          className="w-4 h-4 object-cover"
+                        />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              )
+          )}
       </div>
 
       <div className="sticky bottom-0 left-0 right-0 mx-auto my-auto">

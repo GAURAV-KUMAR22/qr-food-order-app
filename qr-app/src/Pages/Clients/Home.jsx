@@ -105,7 +105,10 @@ export const Home = () => {
   };
 
   // Calculate total quantity in cart
-  const totalQty = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalQty = cartItems.reduce(
+    (sum, item) => sum + (item.quantity ? item.quantity : 0),
+    0
+  );
 
   // search functionality
   const filteredGroupedProducts = Object.keys(groupedProducts).reduce(
