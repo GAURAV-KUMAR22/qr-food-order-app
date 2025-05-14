@@ -27,7 +27,6 @@ import { CategoryView } from "./Pages/Admin/CategoryView";
 import { TodayOrderStat } from "./Pages/Admin/TodayOrderStat";
 import { io } from "socket.io-client";
 import { useAuth } from "../Context/AuthProvider";
-import LoadingIcons from "react-loading-icons";
 import { Bars } from "react-loading-icons";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 console.log(backendUrl);
@@ -63,8 +62,8 @@ function App() {
       <ScrollToTop />
       <Suspense
         fallback={
-          <div className="w-[100%] mx-auto justify-center items-center flex">
-            <LoadingIcons.Bars />
+          <div className="flex w-[98%] mx-auto justify-center items-center">
+            <p>Loading....</p>
           </div>
         }
       >
