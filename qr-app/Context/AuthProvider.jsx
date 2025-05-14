@@ -1,22 +1,29 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import publicAxios from "../src/Services/PublicAxios";
 import PrivateAxios from "../src/Services/PrivateAxios";
-
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setAuthenticated] = useState(false);
+  const [isAuthenticated, setAuthenticated] = useState(null); // null = loading
 
   useEffect(() => {
-    const AuthorizationFetched = async () => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setAuthenticated(false);
+        return;
+      }
+
       try {
-        await PrivateAxios.get("/auth/check"); // Axios will throw error if request fails
+        await PrivateAxios.get("/auth/check"); // token is sent via interceptor
         setAuthenticated(true);
       } catch (error) {
         setAuthenticated(false);
+        localStorage.removeItem("token");
       }
     };
-    AuthorizationFetched();
+
+    checkAuth();
   }, []);
 
   return (

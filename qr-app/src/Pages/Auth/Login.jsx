@@ -2,13 +2,16 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PrivateAxios from "../../Services/PrivateAxios";
 import { ReverseButton } from "../../components/Client/ReverseButton";
+import { useAuth } from "../../../Context/AuthProvider";
 
 export const Login = () => {
+  const { setAuthenticated } = useAuth();
   const naviagate = useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+
   const [error, setErrors] = useState({});
 
   const validate = () => {
@@ -38,6 +41,8 @@ export const Login = () => {
       if (resoponce.status !== 200) {
         throw new Error({ message: "Respocne Failed" });
       }
+      localStorage.setItem("token", resoponce.data.token);
+      setAuthenticated(true);
       naviagate("/admin");
     }
   }

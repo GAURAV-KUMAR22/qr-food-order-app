@@ -40,35 +40,42 @@ export const postNewUser = async (req, res) => {
 };
 
 export const putUser = async (req, res) => {
-  const { name, phone, table } = req.body;
-  if (name.length === 0 || phone.length <= 10) {
-    return res
-      .status(400)
-      .json({ message: "All fields required with valid value" });
+  let { name, phone, table } = req.body;
+
+  phone = phone ? phone.toString().trim() : "";
+
+  if (!name || !phone || !table) {
+    return res.status(400).json({ message: "All fields are required" });
   }
 
+  if (phone.length !== 10 || isNaN(phone)) {
+    return res.status(400).json({ message: "Phone number must be 10 digits" });
+  }
+
+  console.log(name, phone, table);
+
   try {
+    // Find the existing user by phone
     const existingUser = await User.findOne({ phone });
+    console.log(existingUser);
+
     if (!existingUser) {
-      return res.status(400).json({ message: "Invalid details" });
+      return res.status(400).json({ message: "User not found" });
     }
 
-    if (name) {
-      existingUser.name = name;
-    }
-    if (phone) {
-      phone.trim();
-      existingUser.phone = phone;
-    }
-    if (table) {
-      existingUser.table = table;
-    }
+    // Update user fields if they are provided
+    if (name) existingUser.name = name;
+    if (phone) existingUser.phone = phone.trim(); // Ensure phone is trimmed
+    if (table) existingUser.table = table;
 
+    // Save the updated user
     await existingUser.save();
+
     res
       .status(200)
-      .json({ message: "user updated Successfully", user: existingUser });
+      .json({ message: "User updated successfully", user: existingUser });
   } catch (error) {
+    console.error("Error updating user:", error);
     res.status(500).json({ message: "Internal server error", error });
   }
 };
