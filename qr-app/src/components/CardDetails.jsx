@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import "../Pages/Clients/Home.css";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../Context/AuthProvider";
 
 export const CardDetails = ({
   dishName,
@@ -20,6 +21,7 @@ export const CardDetails = ({
   const [selected, setSelected] = useState(false);
   const timerRef = useRef(null);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const totelStock = fixedStock ? fixedStock : 0;
   let stockTag;
@@ -32,14 +34,14 @@ export const CardDetails = ({
   } else {
     stockTag = "InStock";
   }
-
+  console.log(stock);
   return (
     <div
-      className={` flex flex-col justify-end shadow-md hover:scale-105 ${css} my-0`} // no relative
+      className={`flex flex-col justify-end shadow-md hover:scale-105 ${css} my-0`}
       style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
     >
       {/* Stock tag aligned top-right using flex */}
-      {stock >= 0 && (
+      {isAuthenticated && stock >= 0 && (
         <div className="flex justify-end w-full px-1 mt-0.5 pt-2">
           <div
             className={`px-2 py-1.5 text-xs font-medium rounded-xl
@@ -73,7 +75,9 @@ export const CardDetails = ({
       {/* Buttons */}
       {!button && (
         <button
-          className="w-[85%] font-semibold bg-yellow-300 mb-2 rounded-sm h-[35px] justify-center mx-auto mt-1"
+          className={`${
+            stock === 0 ? "pointer-events-none opacity-50" : ""
+          } w-[85%] font-semibold bg-yellow-300 mb-2 rounded-sm h-[35px] justify-center mx-auto mt-1`}
           onClick={() => onAddToCart(category, id, price)}
         >
           Add to cart

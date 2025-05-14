@@ -26,10 +26,14 @@ import { Bounce, ToastContainer } from "react-toastify";
 import { CategoryView } from "./Pages/Admin/CategoryView";
 import { TodayOrderStat } from "./Pages/Admin/TodayOrderStat";
 import { io } from "socket.io-client";
+import { useAuth } from "../Context/AuthProvider";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 console.log(backendUrl);
 const socket = io(backendUrl);
 function App() {
+  const { isAuthenticated } = useAuth();
+  console.log(isAuthenticated);
+
   useEffect(() => {
     const handleConnect = () => {
       console.log("Connected to socket server");
