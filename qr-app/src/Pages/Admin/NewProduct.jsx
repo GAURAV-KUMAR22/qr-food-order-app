@@ -69,8 +69,9 @@ export const NewProduct = () => {
     const controler = new AbortController();
     async function fetched() {
       const responce = await PrivateAxios.get("/products/category");
-      console.log(responce);
-      if (responce.statusText === "OK") {
+      console.log(responce.data.content);
+      if (responce.status === "200") {
+        console.log(catgory);
         console.log(responce.data.content);
         setCategoryOption(responce.data.content);
       } else {
