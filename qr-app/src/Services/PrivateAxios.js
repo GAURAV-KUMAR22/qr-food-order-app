@@ -1,7 +1,11 @@
 import axios from "axios";
 
 const PrivateAxios = axios.create({
-  baseURL: `${import.meta.env.VITE_BACKEND_URL}/api/v1`,
+  baseURL: `${
+    import.meta.env.MODE === "Production"
+      ? import.meta.env.VITE_BACKEND_PROD
+      : import.meta.env.VITE_BACKEND_DEV
+  }/api/v1`,
   headers: {
     "Content-Type": "application/json",
   },

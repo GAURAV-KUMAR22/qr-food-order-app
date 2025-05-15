@@ -4,6 +4,7 @@ import PrivateAxios from "../../Services/PrivateAxios";
 import { Model } from "../../components/Model";
 import { ReverseButton } from "../../components/Client/ReverseButton";
 import publicAxios from "../../Services/PublicAxios";
+import toast from "react-hot-toast";
 
 export const NewProduct = () => {
   const [catgory, setCategoryOption] = useState([]);
@@ -15,6 +16,11 @@ export const NewProduct = () => {
   const [error, setErrors] = useState({});
   const location = useLocation();
   let product = location?.state?.product;
+
+  const BackendUrl =
+    import.meta.env.VITE_MODE === "Production"
+      ? import.meta.env.VITE_BACKEND_PROD
+      : import.meta.env.VITE_BACKEND_DEV;
 
   const [form, setForm] = useState({
     name: "",
@@ -66,21 +72,29 @@ export const NewProduct = () => {
 
   // Fetch Category
   useEffect(() => {
-    const controler = new AbortController();
+    const controller = new AbortController();
+
     async function fetched() {
-      const responce = await PrivateAxios.get("/products/category");
-      console.log(responce.data.content);
-      if (responce.status === "200") {
-        console.log(catgory);
-        console.log(responce.data.content);
-        setCategoryOption(responce.data.content);
-      } else {
-        throw new Error({ message: "Responce failed" });
+      try {
+        const response = await PrivateAxios.get("/products/category", {
+          signal: controller.signal,
+        });
+
+        if (response.status === 200) {
+          console.log(response.data.content);
+          setCategoryOption(response.data.content);
+        } else {
+          throw new Error("Response failed"); // FIXED: now it's a string
+        }
+      } catch (error) {
+        throw new Error("Response failed", error.message || error);
       }
     }
+
     fetched();
+
     return () => {
-      controler.abort();
+      controller.abort();
     };
   }, []);
 
@@ -116,6 +130,7 @@ export const NewProduct = () => {
       data.append("price", form.price);
       data.append("quantity", form.quantity);
       console.log(data);
+
       const responce = product
         ? await PrivateAxios.put(`/products/${product._id}`, data, {
             headers: {
@@ -135,6 +150,7 @@ export const NewProduct = () => {
           price: "",
         });
         setPicture(null);
+        toast.success("New product Added");
         navigate("/admin");
       }
     }
@@ -167,6 +183,7 @@ export const NewProduct = () => {
   async function handleDelete(productId) {
     const responce = await publicAxios.delete(`/products/${productId}`);
     if (responce.status === 200) {
+      toast.success("Product deleted succussfully");
       navigate("/admin");
     }
   }
@@ -206,9 +223,7 @@ export const NewProduct = () => {
                       />
                     ) : product ? (
                       <img
-                        src={`${import.meta.env.VITE_BACKEND_URL}/${
-                          product.imageUrl
-                        }`}
+                        src={`${BackendUrl}/${product.imageUrl}`}
                         alt="file upload"
                         className="w-[50px] h-[50px] object-cover rounded-full"
                       />

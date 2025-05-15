@@ -22,19 +22,19 @@ import { OrderUpdate } from "./Pages/Admin/OrderUpdate";
 import { TotalSale } from "./Pages/Admin/TotalSale";
 import { GraphicalPage } from "./Pages/Admin/GraphicalPage";
 import { ProductsDetails } from "./Pages/Clients/ProductsDetails";
-import { Bounce, ToastContainer } from "react-toastify";
 import { CategoryView } from "./Pages/Admin/CategoryView";
 import { TodayOrderStat } from "./Pages/Admin/TodayOrderStat";
 import { io } from "socket.io-client";
 import { useAuth } from "../Context/AuthProvider";
-import { Bars } from "react-loading-icons";
-import LoadingIcons from "react-loading-icons";
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
-console.log(backendUrl);
+import toast, { Toaster } from "react-hot-toast";
+const backendUrl =
+  import.meta.env.MODE === "Production"
+    ? import.meta.env.VITE_BACKEND_PROD
+    : import.meta.env.VITE_BACKEND_DEV;
+
 const socket = io(backendUrl);
 function App() {
   const { isAuthenticated } = useAuth();
-  console.log(isAuthenticated);
 
   useEffect(() => {
     const handleConnect = () => {
@@ -61,10 +61,32 @@ function App() {
         className="hidden"
       />
       <ScrollToTop />
+
       <Suspense
         fallback={
-          <div className="flex w-[98%] mx-auto justify-center items-center">
-              
+          <div className="m duration-400 x-auto my-auto w-[98%] animate-pulse">
+            <div>
+              <div className="mb-4 h-[250px] rounded-lg bg-gray-400"></div>
+            </div>
+            <div className="mb-4 h-[30px] w-full rounded bg-gray-400"></div>
+            <div className="mb-8 flex gap-4">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="h-[180px] w-[170px] rounded-2xl bg-gray-400"
+                ></div>
+              ))}
+            </div>
+            <div className="mb-4 flex gap-4">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="h-[180px] w-[170px] rounded-2xl bg-gray-400"
+                ></div>
+              ))}
+            </div>
+            <div className="mb-4 h-[35px] w-full rounded bg-gray-400"></div>
+            <div className="mb-4 h-[35px] w-full rounded bg-gray-400"></div>
           </div>
         }
       >
@@ -94,20 +116,7 @@ function App() {
           </Route>
         </Routes>
       </Suspense>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        limit={1}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-        transition={Bounce}
-      />
+      <Toaster />
     </>
   );
 }

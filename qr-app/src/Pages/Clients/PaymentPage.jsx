@@ -5,11 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearCart, syncCartFromLocalStorage } from "../../Redux/Cart/index";
 import { ReverseButton } from "../../components/Client/ReverseButton";
 import { socket } from "../../Services/Socket";
-import PrivateAxios from "../../Services/PrivateAxios";
-// import { socket } from '../../App';
-// import { io } from 'socket.io-client';
-
-// const socket = io('process.env.VITE_BACKEND_URL'); // Or your live URL
+import toast from "react-hot-toast";
 
 export const PaymentPage = () => {
   const [searchParams] = useSearchParams();
@@ -61,7 +57,7 @@ export const PaymentPage = () => {
       if (response.status === 200 || response.status === 201) {
         setOrder(response.data.order);
         dispatch(clearCart()); // Clear Redux and localStorage
-        alert("Order placed successfully!");
+        toast.success("Your order was placed successfully!");
         socket.emit("join-admin");
         navigate("/order-success");
         const orderId = response.data.order._id;
