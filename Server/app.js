@@ -41,16 +41,13 @@ function shouldCompress(req, res) {
   return compression.filter(req, res);
 }
 
-const allowedOrigins = process.env.FRONTEND;
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin:
+      process.env.MODE === "Production"
+        ? process.env.FRONTEND_PROD
+        : process.env.FRONTEND_DEV,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
 );
@@ -59,40 +56,16 @@ const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND,
+    origin:
+      process.env.MODE === "Production"
+        ? process.env.FRONTEND_PROD
+        : process.env.FRONTEND_DEV,
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
-// socketIo(io);
-io.on("connection", (socket) => {
-  console.log(`Socket connected: ${socket.id}`);
-
-  // Admin joins admin room
-  socket.on("join-admin", () => {
-    socket.join("admin-room");
-    console.log(`Socket ${socket.id} joined admin-room`);
-  });
-
-  // Notify admins about a new order
-  socket.on("order-placed", () => {
-    io.to("admin-room").emit("placed-order", () => {
-      console.log("admin in the room");
-    });
-    console.log(`Order placed`);
-  });
-
-  // Notify admins about order status update
-  socket.on("order-updated", () => {
-    io.to("admin-room").emit("order-updated-status");
-    console.log(`Order updated:`);
-  });
-
-  socket.on("disconnect", () => {
-    console.log(`Socket disconnected: ${socket.id}`);
-  });
-});
+socketIo(io);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

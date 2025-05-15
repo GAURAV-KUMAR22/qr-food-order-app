@@ -1,11 +1,15 @@
 import axios from "axios";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-console.log(backendUrl)
+console.log(backendUrl);
 const publicAxios = axios.create({
-    baseURL: `${import.meta.env.VITE_BACKEND_URL}/api/v1`,
-    headers: {
-        "Content-Type": "application/json",
-    }
+  baseURL: `${
+    import.meta.env.MODE === "Production"
+      ? import.meta.env.VITE_BACKEND_PROD
+      : import.meta.env.VITE_BACKEND_DEV
+  }/api/v1`,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 export default publicAxios;

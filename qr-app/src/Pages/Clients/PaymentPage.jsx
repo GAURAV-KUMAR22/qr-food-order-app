@@ -6,7 +6,6 @@ import { clearCart, syncCartFromLocalStorage } from "../../Redux/Cart/index";
 import { ReverseButton } from "../../components/Client/ReverseButton";
 import { socket } from "../../Services/Socket";
 import toast from "react-hot-toast";
-import { ToastContainer } from "react-toastify";
 
 export const PaymentPage = () => {
   const [searchParams] = useSearchParams();

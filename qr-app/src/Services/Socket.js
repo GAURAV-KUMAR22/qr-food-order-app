@@ -2,8 +2,8 @@
 
 import { io } from "socket.io-client";
 const URL =
-  import.meta.env.MODE === "production"
-    ? import.meta.env.VITE_BACKEND_URL
-    : "http://localhost:5000";
+  import.meta.env.MODE === "Production"
+    ? import.meta.env.VITE_BACKEND_PROD
+    : import.meta.env.VITE_BACKEND_DEV;
 
 export const socket = io(URL);

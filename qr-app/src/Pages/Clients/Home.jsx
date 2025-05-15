@@ -288,7 +288,7 @@ export const Home = () => {
         <CategoryCard uniqueCategories={uniqueCategories} products={products} />
       </div>
 
-      <div className="mb-6">
+      <div className="mb-12">
         {Object.keys(groupedProducts).map((categoryName) => (
           <div key={categoryName} className="category-section mb-2">
             <div className="flex justify-between px-4 py-2">

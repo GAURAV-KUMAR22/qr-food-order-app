@@ -3,7 +3,11 @@ import { Link } from "react-router-dom";
 import "../Pages/Clients/Home.css";
 
 export const CardItem = ({ name, imgPath }) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl =
+    import.meta.env.MODE === "Production"
+      ? import.meta.env.VITE_BACKEND_PROD
+      : import.meta.env.VITE_BACKEND_DEV;
+
   return (
     <div className="flex flex-col  ">
       <div

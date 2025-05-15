@@ -17,7 +17,10 @@ export const CardDetails = ({
   fixedStock,
   data,
 }) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl =
+    import.meta.env.MODE === "Production"
+      ? import.meta.env.VITE_BACKEND_PROD
+      : import.meta.env.VITE_BACKEND_DEV;
   const [selected, setSelected] = useState(false);
   const timerRef = useRef(null);
   const navigate = useNavigate();

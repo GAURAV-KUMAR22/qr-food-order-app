@@ -22,13 +22,16 @@ import { OrderUpdate } from "./Pages/Admin/OrderUpdate";
 import { TotalSale } from "./Pages/Admin/TotalSale";
 import { GraphicalPage } from "./Pages/Admin/GraphicalPage";
 import { ProductsDetails } from "./Pages/Clients/ProductsDetails";
-import { Bounce, ToastContainer } from "react-toastify";
 import { CategoryView } from "./Pages/Admin/CategoryView";
 import { TodayOrderStat } from "./Pages/Admin/TodayOrderStat";
 import { io } from "socket.io-client";
 import { useAuth } from "../Context/AuthProvider";
 import toast, { Toaster } from "react-hot-toast";
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const backendUrl =
+  import.meta.env.MODE === "Production"
+    ? import.meta.env.VITE_BACKEND_PROD
+    : import.meta.env.VITE_BACKEND_DEV;
+
 const socket = io(backendUrl);
 function App() {
   const { isAuthenticated } = useAuth();
