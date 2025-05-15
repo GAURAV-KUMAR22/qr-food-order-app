@@ -4,6 +4,7 @@ import PrivateAxios from "../../Services/PrivateAxios";
 import { Model } from "../../components/Model";
 import { ReverseButton } from "../../components/Client/ReverseButton";
 import publicAxios from "../../Services/PublicAxios";
+import toast from "react-hot-toast";
 
 export const NewProduct = () => {
   const [catgory, setCategoryOption] = useState([]);
@@ -16,9 +17,11 @@ export const NewProduct = () => {
   const location = useLocation();
   let product = location?.state?.product;
 
-  const BackendUrl =  import.meta.env.VITE_MODE === "Production"
-    ? import.meta.env.VITE_BACKEND_PROD
-    : import.meta.env.VITE_BACKEND_DEV;
+
+  const BackendUrl =
+    import.meta.env.VITE_MODE === "Production"
+      ? import.meta.env.VITE_BACKEND_PROD
+      : import.meta.env.VITE_BACKEND_DEV;
 
   const [form, setForm] = useState({
     name: "",
@@ -128,6 +131,7 @@ export const NewProduct = () => {
       data.append("price", form.price);
       data.append("quantity", form.quantity);
       console.log(data);
+
       const responce = product
         ? await PrivateAxios.put(`/products/${product._id}`, data, {
             headers: {
@@ -147,6 +151,7 @@ export const NewProduct = () => {
           price: "",
         });
         setPicture(null);
+        toast.success("New product Added");
         navigate("/admin");
       }
     }
@@ -179,6 +184,7 @@ export const NewProduct = () => {
   async function handleDelete(productId) {
     const responce = await publicAxios.delete(`/products/${productId}`);
     if (responce.status === 200) {
+      toast.success("Product deleted succussfully");
       navigate("/admin");
     }
   }
@@ -218,9 +224,7 @@ export const NewProduct = () => {
                       />
                     ) : product ? (
                       <img
-                        src={`${BackendUrl}/${
-                          product.imageUrl
-                        }`}
+                        src={`${BackendUrl}/${product.imageUrl}`}
                         alt="file upload"
                         className="w-[50px] h-[50px] object-cover rounded-full"
                       />

@@ -13,6 +13,7 @@ import publicAxios from "../../Services/PublicAxios";
 import { socket } from "../../Services/Socket";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { playNotificationSound } from "../../Util/PlaySound";
 // import { socket } from '../../Services/Socket';
 
 export const Home = () => {
@@ -167,7 +168,7 @@ export const Home = () => {
       socket.emit("join-admin");
 
       const handleOrderUpdate = (data) => {
-        console.log("Admin received order update:", data);
+        playNotificationSound();
         fetched(existingUser._id);
       };
 

@@ -8,6 +8,7 @@ import { TbCategoryPlus } from "react-icons/tb";
 import { MdAttachMoney } from "react-icons/md";
 import { StatCard } from "../../components/Admin/StatCard";
 import { socket } from "../../Services/Socket";
+import { playNotificationSound } from "../../Util/PlaySound";
 
 export const DashBoardPage = () => {
   const [products, setProducts] = useState([]);
@@ -59,7 +60,7 @@ export const DashBoardPage = () => {
     socket.emit("join-admin");
 
     const handleOrderUpdate = (data) => {
-      console.log(data);
+      playNotificationSound();
       fetchOrder();
     };
 
