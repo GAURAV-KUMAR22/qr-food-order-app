@@ -41,16 +41,10 @@ function shouldCompress(req, res) {
   return compression.filter(req, res);
 }
 
-const allowedOrigins = process.env.FRONTEND;
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin:process.env.FRONTEND,
+    methods:['GET','POST','PUT','PATCH','DELETE'],
     credentials: true,
   })
 );
