@@ -26,18 +26,26 @@ export const PaymentPage = () => {
 
   const totalPrice = Array.isArray(cart)
     ? cart.reduce(
-        (acc, item) => acc + Number(item.price) * Number(item.quantity),
+        (acc, item) =>
+          acc +
+          Number(item.price ? item.price : 0) *
+            Number(item.quantity ? item.quantity : 0),
         0
       )
     : 0;
 
   const HandleplaceOrder = async () => {
     try {
-      const mappedItems = cart.map((item) => ({
-        productId: item._id,
-        quantity: item.quantity,
-        price: item.price,
-      }));
+      const mappedItems = cart.reduce((acc, item) => {
+        if (item.quantity) {
+          acc.push({
+            productId: item._id,
+            quantity: item.quantity,
+            price: item.price,
+          });
+        }
+        return acc;
+      }, []);
 
       const productData = {
         userId,

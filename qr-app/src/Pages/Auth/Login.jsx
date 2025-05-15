@@ -2,13 +2,16 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PrivateAxios from "../../Services/PrivateAxios";
 import { ReverseButton } from "../../components/Client/ReverseButton";
+import { useAuth } from "../../../Context/AuthProvider";
 
 export const Login = () => {
+  const { setAuthenticated } = useAuth();
   const naviagate = useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+
   const [error, setErrors] = useState({});
 
   const validate = () => {
@@ -19,15 +22,15 @@ export const Login = () => {
     if (!emailRegex.test(form.email)) {
       formError.email = "Email is required and must me correct";
     }
-
     const passwordRezax =
-      /(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*-+].{8,})+$/;
+      /(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@*$%&+=!]).{8,}$/;
 
-    // if (!passwordRezax.test(form.password)) {
-    //   formError.password =
-    //     "Password must be Atleat one Uppercase later and one lowerCase and one symbol";
-    // }
+    if (!passwordRezax.test(form.password)) {
+      formError.password =
+        "Password must be Atleat one Uppercase later and one lowerCase and one symbol";
+    }
     setErrors(formError);
+
     return Object.keys(formError).length === 0;
   };
 
@@ -38,6 +41,8 @@ export const Login = () => {
       if (resoponce.status !== 200) {
         throw new Error({ message: "Respocne Failed" });
       }
+      localStorage.setItem("token", resoponce.data.token);
+      setAuthenticated(true);
       naviagate("/admin");
     }
   }
@@ -49,8 +54,12 @@ export const Login = () => {
   }
   return (
     <div className="min-w-[375px] ml-2 mr-2 h-full overflow-x-hidden items-center relative">
-      <div className="">
-        <ReverseButton route={"/"} routeName={"Home"} />
+      <div className="mt-3">
+        <ReverseButton
+          route={"/"}
+          routeName={"Home"}
+          css={"flex justify-start"}
+        />
       </div>
       <div className="mt-10 flex flex-col items-center">
         <h2 className="flex justify-center text-2xl font-semibold">
@@ -79,7 +88,9 @@ export const Login = () => {
               className="m-2 border border-gray-400 pl-2 h-12 rounded-md "
               onChange={handleInput}
             />
-            {error.password && <p className="text-red-800 text-center">{error.password}</p>}
+            {error.password && (
+              <p className="text-red-800 text-center">{error.password}</p>
+            )}
           </div>
           <div className="ml-2 mr-2">
             <button

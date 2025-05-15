@@ -98,11 +98,17 @@ export const Home = () => {
   ];
 
   const addToCarts = async (product) => {
-    dispatch(addToCart(product));
+    console.log("rpoductQunatutu", product.quantity);
+    if (product.quantity > 0) {
+      dispatch(addToCart(product));
+    }
   };
 
   // Calculate total quantity in cart
-  const totalQty = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalQty = cartItems.reduce(
+    (sum, item) => sum + (item.quantity ? item.quantity : 0),
+    0
+  );
 
   // search functionality
   const filteredGroupedProducts = Object.keys(groupedProducts).reduce(
@@ -312,6 +318,7 @@ export const Home = () => {
                     image={product.imageUrl}
                     onAddToCart={() => addToCarts(product)}
                     product={product}
+                    stock={product.quantity ? product.quantity : 0}
                   />
                 </div>
               ))}
