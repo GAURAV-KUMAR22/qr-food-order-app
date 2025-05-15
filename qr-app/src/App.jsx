@@ -27,6 +27,7 @@ import { TodayOrderStat } from "./Pages/Admin/TodayOrderStat";
 import { io } from "socket.io-client";
 import { useAuth } from "../Context/AuthProvider";
 import toast, { Toaster } from "react-hot-toast";
+import { playNotificationSound } from "./Util/PlaySound";
 const backendUrl =
   import.meta.env.MODE === "Production"
     ? import.meta.env.VITE_BACKEND_PROD
