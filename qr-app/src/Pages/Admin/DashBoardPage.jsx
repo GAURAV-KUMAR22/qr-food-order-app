@@ -212,10 +212,7 @@ export const DashBoardPage = () => {
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {groupedProducts[categoryName].map((product) => (
-              <div
-                key={product._id}
-                className=" min-w-[150px] flex-shrink-0 lg:1/4"
-              >
+              <div key={product._id} className="min-w-[150px] flex-shrink-0">
                 <CardDetails
                   key={product._id}
                   id={product._id}
@@ -226,7 +223,7 @@ export const DashBoardPage = () => {
                   image={product.imageUrl}
                   product={product}
                   button={true}
-                  css="h-[220px] mb-0 "
+                  css="h-[220px]"
                   stock={product.quantity ? product.quantity : 0}
                   fixedStock={product.totelQuantity ? product.totelQuantity : 0}
                   data={product}

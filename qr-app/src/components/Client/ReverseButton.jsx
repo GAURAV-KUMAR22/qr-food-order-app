@@ -11,7 +11,7 @@ export const ReverseButton = ({ route, routeName, css }) => {
       <span className="w-[18px] h-[18px]">
         <IoIosArrowBack />
       </span>
-      <span className="text-base font-medium"> {routeName} </span>
+      <span className="text-base font-medium capitalize"> {routeName} </span>
     </Link>
   );
 };

@@ -28,6 +28,7 @@ import { TodayOrderStat } from "./Pages/Admin/TodayOrderStat";
 import { io } from "socket.io-client";
 import { useAuth } from "../Context/AuthProvider";
 import { Bars } from "react-loading-icons";
+import LoadingIcons from "react-loading-icons";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 console.log(backendUrl);
 const socket = io(backendUrl);
@@ -63,7 +64,7 @@ function App() {
       <Suspense
         fallback={
           <div className="flex w-[98%] mx-auto justify-center items-center">
-            <p>Loading....</p>
+              
           </div>
         }
       >

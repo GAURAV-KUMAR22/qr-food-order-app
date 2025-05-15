@@ -37,8 +37,11 @@ export const CardDetails = ({
   console.log(stock);
   return (
     <div
-      className={`flex flex-col justify-end shadow-md hover:scale-105 ${css} my-0`}
-      style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      className={`flex flex-col justify-end shadow-md hover:scale-105 ${css} my-0 sm:w-[190px]`}
+      style={{
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+      }}
     >
       {/* Stock tag aligned top-right using flex */}
       {isAuthenticated && stock >= 0 && (
