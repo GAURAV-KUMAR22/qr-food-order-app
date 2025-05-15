@@ -7,12 +7,12 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../Redux/Cart/index";
 import EventEmitter from "events";
-import { Bounce, toast } from "react-toastify";
 import { CategoryCard } from "../../components/Client/CategoryCard";
 import OrderStatusCard from "../../components/Client/OrderStatusCard";
 import publicAxios from "../../Services/PublicAxios";
 import { socket } from "../../Services/Socket";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 // import { socket } from '../../Services/Socket';
 
 export const Home = () => {
@@ -98,8 +98,8 @@ export const Home = () => {
   ];
 
   const addToCarts = async (product) => {
-    console.log("rpoductQunatutu", product.quantity);
     if (product.quantity > 0) {
+      toast.success("Product added to cart successfully!");
       dispatch(addToCart(product));
     }
   };
