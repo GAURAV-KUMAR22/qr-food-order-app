@@ -17,6 +17,7 @@ export const NewProduct = () => {
   const location = useLocation();
   let product = location?.state?.product;
 
+
   const BackendUrl =
     import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_BACKEND_PROD

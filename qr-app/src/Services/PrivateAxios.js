@@ -2,7 +2,7 @@ import axios from "axios";
 
 const PrivateAxios = axios.create({
   baseURL: `${
-    import.meta.env.MODE === "Production"
+    import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_BACKEND_PROD
       : import.meta.env.VITE_BACKEND_DEV
   }/api/v1`,
