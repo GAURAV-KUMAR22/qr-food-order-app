@@ -16,6 +16,10 @@ export const NewProduct = () => {
   const location = useLocation();
   let product = location?.state?.product;
 
+  const BackendUrl =  import.meta.env.VITE_MODE === "Production"
+    ? import.meta.env.VITE_BACKEND_PROD
+    : import.meta.env.VITE_BACKEND_DEV;
+
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -214,7 +218,7 @@ export const NewProduct = () => {
                       />
                     ) : product ? (
                       <img
-                        src={`${import.meta.env.VITE_BACKEND_URL}/${
+                        src={`${BackendUrl}/${
                           product.imageUrl
                         }`}
                         alt="file upload"
