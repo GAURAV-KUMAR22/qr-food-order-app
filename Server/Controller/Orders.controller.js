@@ -53,6 +53,7 @@ export const getTodayOrders = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error });
   }
 };
+
 export const postOrder = async (req, res) => {
   const { items, totalAmount, tax, deliveryCharge, userId, paymentMethod } =
     req.body;
@@ -108,8 +109,8 @@ export const postOrder = async (req, res) => {
 
 export const updateOrder = async (req, res) => {
   const { id } = req.params;
-  const { status, productIds } = req.body;
-
+  const { status, productIds, paymentMethod } = req.body;
+  console.log(paymentMethod);
   if (!id) {
     return res.status(400).json({ message: "OrderId is not found" });
   }
@@ -127,12 +128,41 @@ export const updateOrder = async (req, res) => {
     }
 
     if (status === "delivered") {
-      // Increment total orders and revenue for "delivered" status
-      const newSale = new Sales({
-        totelOrders: 1, // Correct increment
-        totelRevenue: order.totalAmount, // Correct revenue
-      });
-      await newSale.save();
+      try {
+        const quantityMap = new Map();
+
+        for (const item of productIds) {
+          const key = item.productId._id.toString();
+
+          if (quantityMap.has(key)) {
+            quantityMap.get(key).quantitySold += item.quantity;
+          } else {
+            quantityMap.set(key, {
+              productId: item.productId._id,
+              name: item.productId.name,
+              quantitySold: item.quantity,
+            });
+          }
+        }
+        console.log(quantityMap.values());
+        const bestSellingItems = Array.from(quantityMap.values());
+
+        const productObjectIds = Array.from(
+          new Set(productIds.map((item) => item.productId._id))
+        );
+
+        const newSale = await new Sales({
+          totelOrders: 1,
+          totelRevenue: order.totalAmount,
+          products: productObjectIds,
+          bestSellingItems: bestSellingItems, // now an array
+          paymentMethod: paymentMethod,
+        });
+
+        await newSale.save();
+      } catch (error) {
+        console.error("Error saving sales:", error);
+      }
     }
 
     if (status === "cancelled" && productIds && productIds.length > 0) {

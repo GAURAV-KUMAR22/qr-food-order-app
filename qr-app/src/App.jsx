@@ -26,9 +26,13 @@ import { CategoryView } from "./Pages/Admin/CategoryView";
 import { TodayOrderStat } from "./Pages/Admin/TodayOrderStat";
 import { io } from "socket.io-client";
 import { useAuth } from "../Context/AuthProvider";
+<<<<<<< Updated upstream
 import toast, { Toaster } from "react-hot-toast";
+=======
+import { Toaster } from "react-hot-toast";
+>>>>>>> Stashed changes
 const backendUrl =
-  import.meta.env.MODE === "Production"
+  import.meta.env.VITE_MODE === "Production"
     ? import.meta.env.VITE_BACKEND_PROD
     : import.meta.env.VITE_BACKEND_DEV;
 

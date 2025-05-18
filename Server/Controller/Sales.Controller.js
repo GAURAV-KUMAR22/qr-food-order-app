@@ -1,14 +1,104 @@
-import Sales from "../Model/Sales.model.js"
+import Sales from "../Model/Sales.model.js";
 
 export const getAllSales = async (req, res) => {
-    try {
-        const salesData = await Sales.find();
-        if (!salesData) {
-            return res.status(500).json({ message: 'Saled record is null' })
-        }
-        res.status(200).json({ content: salesData });
+  const { startDate, endDate, status, category, paymentMethod } = req.query;
 
-    } catch (error) {
-        res.status(500).json({ message: 'Internal Server error' })
+  const matchStage = {};
+
+  if (startDate && endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+    matchStage.date = { $gte: start, $lte: end };
+  }
+  if (status) matchStage.status = status;
+  if (paymentMethod) {
+    const methods = paymentMethod.split(",").map((m) => m.trim());
+    matchStage.paymentMethod =
+      methods.length > 1 ? { $in: methods } : methods[0];
+  }
+
+  const pipeline = [
+    { $match: matchStage },
+
+    // Unwind bestSellingItems array
+    { $unwind: "$bestSellingItems" },
+
+    // Lookup product details
+    {
+      $lookup: {
+        from: "products",
+        localField: "bestSellingItems.productId",
+        foreignField: "_id",
+        as: "productDetails",
+      },
+    },
+    { $unwind: "$productDetails" },
+
+    // Lookup category of each product
+    {
+      $lookup: {
+        from: "categories",
+        localField: "productDetails.categoryId",
+        foreignField: "_id",
+        as: "categoryDetails",
+      },
+    },
+    { $unwind: "$categoryDetails" },
+
+    // Filter by category name (case-insensitive, partial match)
+    ...(category
+      ? [
+          {
+            $match: {
+              "categoryDetails.name": {
+                $regex: category,
+                $options: "i",
+              },
+            },
+          },
+        ]
+      : []),
+
+    // Group back to sales document with filtered items
+    {
+      $group: {
+        _id: "$_id",
+        date: { $first: "$date" },
+        totelOrders: { $first: "$totelOrders" },
+        totelRevenue: { $first: "$totelRevenue" },
+        status: { $first: "$status" },
+        paymentMethod: { $first: "$paymentMethod" },
+        bestSellingItems: {
+          $push: {
+            productId: "$bestSellingItems.productId",
+            quantity: "$bestSellingItems.quantity",
+            totalAmount: "$bestSellingItems.totalAmount",
+            productName: "$productDetails.name",
+            category: "$categoryDetails.name",
+          },
+        },
+      },
+    },
+
+    // Optional: Remove sales that have no bestSellingItems after filtering
+    {
+      $match: {
+        bestSellingItems: { $ne: [] },
+      },
+    },
+  ];
+
+  try {
+    const salesData = await Sales.aggregate(pipeline);
+
+    if (!salesData.length) {
+      return res.status(404).json({ message: "No sales records found" });
     }
-}
+
+    return res.status(200).json({ content: salesData });
+  } catch (error) {
+    console.error("Error fetching sales:", error);
+    return res.status(500).json({ message: "Internal Server error" });
+  }
+};

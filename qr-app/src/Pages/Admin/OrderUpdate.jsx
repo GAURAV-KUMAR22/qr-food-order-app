@@ -43,21 +43,16 @@ export const OrderUpdate = () => {
     };
   }, []);
 
-  
   async function handleProcessing(status, orderId, order) {
     try {
-      console.log("Processing order:", order);
       socket.emit("join-admin");
-
-      const productIds = order.items?.map((item) => item); // You could also extract just IDs here if needed
-
-      console.log("Updating Order ID:", orderId, "to status:", status);
-
+      const productIds = order.items?.map((item) => item);
+      console.log(productIds);
       const response = await PrivateAxios.patch(`/orders/${orderId}`, {
         status,
         productIds,
+        paymentMethod: order.paymentMethod,
       });
-
       if (response.status !== 200) {
         throw new Error("Something went wrong, try again later.");
       }
@@ -67,8 +62,6 @@ export const OrderUpdate = () => {
         status,
         productIds,
       });
-
-      console.log("Order updated and event emitted.");
     } catch (error) {
       console.error("Order update failed:", error.message || error);
     }

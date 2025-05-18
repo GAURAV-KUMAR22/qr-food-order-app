@@ -203,6 +203,8 @@ export const Home = () => {
     setPopup((prev) => !prev);
   }
 
+ 
+
   return (
     <div className=" max-w-[100%] mx-auto">
       <button onClick={handleAdminAccess} className="w-full ">
@@ -292,7 +294,9 @@ export const Home = () => {
         {Object.keys(groupedProducts).map((categoryName) => (
           <div key={categoryName} className="category-section mb-2">
             <div className="flex justify-between px-4 py-2">
-              <h2 className="text-[14px] font-semibold">{categoryName}</h2>
+              <h2 className="text-[14px] font-semibold capitalize">
+                {categoryName}
+              </h2>
               <Link
                 to={`/${categoryName}`}
                 state={{ items: groupedProducts[categoryName] }}

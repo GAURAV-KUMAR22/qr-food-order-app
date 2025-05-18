@@ -21,7 +21,7 @@ export const CardItem = ({ name, imgPath }) => {
         />
       </div>
 
-      <p className="text-black text-[13px] font-medium truncate w-full text-center">
+      <p className="text-black text-[13px] font-medium truncate w-full text-center capitalize">
         {name}
       </p>
     </div>
