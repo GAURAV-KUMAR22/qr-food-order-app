@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PrivateAxios from "../../Services/PrivateAxios";
+<<<<<<< HEAD
+import { MdAttachFile } from "react-icons/md";
+=======
+>>>>>>> 86af1c36c2512cb3a0b4e434590429f3e84ec035
 import { Model } from "../../components/Model";
 
 export const NewCategory = () => {
@@ -28,6 +32,10 @@ export const NewCategory = () => {
       [e.target.name]: e.target.value,
     });
   }
+<<<<<<< HEAD
+  console.log(category);
+=======
+>>>>>>> 86af1c36c2512cb3a0b4e434590429f3e84ec035
 
   async function handleSubmit() {
     const Form = new FormData();
@@ -44,7 +52,10 @@ export const NewCategory = () => {
       console.log(responce);
       if (responce.status === 201) {
         setCategory(responce.data.content);
+<<<<<<< HEAD
+=======
         toast.success("Category Added succussfully");
+>>>>>>> 86af1c36c2512cb3a0b4e434590429f3e84ec035
         naviagate("/admin");
       }
     } catch (error) {

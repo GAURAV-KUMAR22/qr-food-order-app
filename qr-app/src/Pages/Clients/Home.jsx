@@ -13,8 +13,6 @@ import publicAxios from "../../Services/PublicAxios";
 import { socket } from "../../Services/Socket";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { playNotificationSound } from "../../Util/PlaySound";
-// import { socket } from '../../Services/Socket';
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -24,6 +22,7 @@ export const Home = () => {
   const [latestOrder, setLatestOrder] = useState([]);
   const [popup, setPopup] = useState(false);
   const [user, setUser] = useState({});
+  const [bestSellingItem, setBestSellingItem] = useState([]);
   const navigate = useNavigate();
   // eslint-disable-next-line no-unused-vars
   const [clickCount, setClickCount] = useState(0);
@@ -53,6 +52,21 @@ export const Home = () => {
       return newCount;
     });
   };
+
+  // Fetch Best Selling Item
+
+  useEffect(() => {
+    async function Fetched() {
+      const response = await publicAxios.get("/products/best-selling-item");
+      console.log(response);
+      if (response.status === 200) {
+        setBestSellingItem(response.data.content);
+      }
+    }
+    Fetched();
+  }, []);
+
+  console.log(bestSellingItem);
 
   // Get products
   useEffect(() => {
@@ -293,7 +307,9 @@ export const Home = () => {
         {Object.keys(groupedProducts).map((categoryName) => (
           <div key={categoryName} className="category-section mb-2">
             <div className="flex justify-between px-4 py-2">
-              <h2 className="text-[14px] font-semibold">{categoryName}</h2>
+              <h2 className="text-[14px] font-semibold capitalize">
+                {categoryName}
+              </h2>
               <Link
                 to={`/${categoryName}`}
                 state={{ items: groupedProducts[categoryName] }}
@@ -309,6 +325,7 @@ export const Home = () => {
             >
               {groupedProducts[categoryName]?.map((product) => (
                 <div key={product._id} className="min-w-[150px] flex-shrink-0">
+                  {console.log(product)}
                   <CardDetails
                     key={product._id}
                     id={product._id}
@@ -320,6 +337,7 @@ export const Home = () => {
                     onAddToCart={() => addToCarts(product)}
                     product={product}
                     stock={product.quantity ? product.quantity : 0}
+                    ratingValue={product.averageRating}
                   />
                 </div>
               ))}

@@ -17,7 +17,6 @@ export const NewProduct = () => {
   const location = useLocation();
   let product = location?.state?.product;
 
-
   const BackendUrl =
     import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_BACKEND_PROD
@@ -35,9 +34,6 @@ export const NewProduct = () => {
   const validateInput = async () => {
     const formError = {};
 
-    if (!product.imageUrl && !picture) {
-      formError.picture = "Image Field is required";
-    }
     if (!form.name) {
       formError.name = "Name Field is required";
     }

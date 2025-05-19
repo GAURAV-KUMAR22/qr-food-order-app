@@ -1,9 +1,10 @@
 import Category from "../Model/Category.model.js";
 import Product from "../Model/Product.model.js";
 import User from "../Model/Admin.model.js";
+import Rating from "../Model/Ratings.model.js";
+import Sales from "../Model/Sales.model.js";
 
 export const getAllProducts = async (req, res) => {
-
   try {
     const products = await Product.find().populate("categoryId");
     if (!products) {
@@ -25,12 +26,12 @@ export const postNewProduct = async (req, res) => {
   }
   try {
     const newProduct = new Product({
-      name: name,
-      categoryId: category,
+      name: name.toLowerCase(),
+      categoryId: category.toLowerCase(),
       price: price,
       quantity: quantity,
       totelQuantity: quantity,
-      description: description ? description : null,
+      description: (description ? description : null).toLowerCase(),
       imageUrl: imageUrl,
     });
 
@@ -107,8 +108,8 @@ export const postCategory = async (req, res) => {
   }
   try {
     const newCategoty = new Category({
-      name,
-      description: description ? description : "",
+      name: name.toLowerCase(),
+      description: (description ? description : "").toLowerCase(),
       imageUrl,
     });
 
@@ -166,5 +167,54 @@ export const deleteProduct = async (req, res) => {
     res.status(200).json({ message: "deleted succussfully" });
   } catch (error) {
     res.status(500).json({ message: "Internal server Error", error });
+  }
+};
+
+export const postRating = async (req, res) => {
+  const { rating, productId, userId } = req.body;
+
+  const calculateAndUpdateAverageRating = async () => {
+    const allRatings = await Rating.find({ productId });
+    const totalRatings = allRatings.length;
+    const averageRating =
+      allRatings.reduce((acc, curr) => acc + curr.rating, 0) / totalRatings;
+
+    await Product.findByIdAndUpdate(productId, {
+      averageRating: averageRating.toFixed(1),
+      totalRatings,
+    });
+  };
+
+  try {
+    const existingRating = await Rating.findOne({ userId, productId });
+
+    if (existingRating) {
+      existingRating.rating = rating;
+      await existingRating.save();
+      await calculateAndUpdateAverageRating();
+
+      return res.status(200).json({ message: "Rating updated successfully" });
+    }
+
+    const newRating = new Rating({ userId, productId, rating });
+    await newRating.save();
+    await calculateAndUpdateAverageRating();
+
+    res.status(201).json({ message: "Rating added successfully" });
+  } catch (error) {
+    console.error("Error posting rating:", error);
+    res.status(500).json({ message: "Internal Server Error", error });
+  }
+};
+
+export const getBestSellingItem = async (req, res) => {
+  console.log("best seling route");
+  try {
+    const Sales = await Sales.find().limit(5);
+    console.log(bestSelingItem);
+    const bestSelingItem = Sales.bestSelingItem;
+    res.status(200).json({ content: bestSelingItem });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error", error });
   }
 };

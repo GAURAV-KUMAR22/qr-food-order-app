@@ -2,6 +2,8 @@ import React, { useRef, useState } from "react";
 import "../Pages/Clients/Home.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthProvider";
+import StarIcons from "react-rating-stars-component";
+import publicAxios from "../Services/PublicAxios";
 
 export const CardDetails = ({
   dishName,
@@ -16,6 +18,7 @@ export const CardDetails = ({
   stock,
   fixedStock,
   data,
+  ratingValue,
 }) => {
   const backendUrl =
     import.meta.env.VITE_MODE === "Production"
@@ -25,9 +28,22 @@ export const CardDetails = ({
   const timerRef = useRef(null);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const [rating, setRating] = useState();
 
   const totelStock = fixedStock ? fixedStock : 0;
   let stockTag;
+
+  async function ratingChanged(newRating) {
+    const userId = await JSON.parse(localStorage.getItem("user"));
+    userId && console.log(userId._id, newRating, id);
+
+    const responce = await publicAxios.post("/products/rating", {
+      productId: id,
+      userId: userId._id,
+      rating: newRating,
+    });
+    console.log(responce);
+  }
 
   if (stock === 0) {
     stockTag = "OutOfStock";
@@ -37,7 +53,7 @@ export const CardDetails = ({
   } else {
     stockTag = "InStock";
   }
-  console.log(stock);
+
   return (
     <div
       className={`flex flex-col justify-end shadow-md hover:scale-105 ${css} my-0 sm:w-[190px]`}
@@ -66,16 +82,29 @@ export const CardDetails = ({
       )}
 
       {/* Content wrapper */}
-      <div className="flex flex-col items-center justify-center pt-2 px-2 pb-2">
+      <div className="flex flex-col items-center justify-center pt-2 px-2 pb-1">
         <img
           src={`${backendUrl}/${image}`}
           alt="food"
           className="w-[80px] h-[80px] object-cover rounded-full"
         />
-        <h3 className="text-sm font-medium tracking-tighter mt-2 text-center">
+        <h3 className="text-sm font-medium tracking-tighter mt-2 text-center capitalize">
           {dishName}
         </h3>
-        <p className="font-bold text-xs mt-1 text-center">Rs. {price}/-</p>
+        <p className="font-bold text-xs mt-1 text-center capitalize">
+          Rs. {price}/-
+        </p>
+        <StarIcons
+          count={5}
+          onChange={ratingChanged}
+          size={20}
+          isHalf={true}
+          emptyIcon={<i className="far fa-star"></i>}
+          halfIcon={<i className="fa fa-star-half-alt"></i>}
+          fullIcon={<i className="fa fa-star"></i>}
+          activeColor="#ffd700"
+          value={ratingValue}
+        />
       </div>
 
       {/* Buttons */}
