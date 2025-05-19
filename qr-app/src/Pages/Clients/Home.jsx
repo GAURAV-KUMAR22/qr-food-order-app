@@ -182,7 +182,7 @@ export const Home = () => {
       socket.emit("join-admin");
 
       const handleOrderUpdate = (data) => {
-        console.log("Admin received order update:", data);
+        playNotificationSound();
         fetched(existingUser._id);
       };
 

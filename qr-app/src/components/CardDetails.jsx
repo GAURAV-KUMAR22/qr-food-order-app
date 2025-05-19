@@ -21,7 +21,7 @@ export const CardDetails = ({
   ratingValue,
 }) => {
   const backendUrl =
-    import.meta.env.MODE === "Production"
+    import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_BACKEND_PROD
       : import.meta.env.VITE_BACKEND_DEV;
   const [selected, setSelected] = useState(false);
