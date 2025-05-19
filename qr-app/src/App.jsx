@@ -28,6 +28,7 @@ import { io } from "socket.io-client";
 import { useAuth } from "../Context/AuthProvider";
 
 import { Toaster } from "react-hot-toast";
+
 const backendUrl =
   import.meta.env.VITE_MODE === "Production"
     ? import.meta.env.VITE_BACKEND_PROD
