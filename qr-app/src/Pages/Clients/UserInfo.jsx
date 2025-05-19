@@ -10,8 +10,6 @@ export const UserInfo = () => {
   const userId = searchParams ? searchParams.get("userId") : null;
   const [error, setErrors] = useState({});
   const navigate = useNavigate();
-  const [phoneNumber, setPhoneNumber] = useState();
-  const [otp, setOtp] = useState();
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem("user");
     return saved ? JSON.parse(saved) : null;
@@ -23,7 +21,10 @@ export const UserInfo = () => {
     phone: user?.phone || "",
     table: user?.table || "",
   });
+  console.log(form);
   const [isEditMode, setIsEditMode] = useState(!user);
+  const [phone, setPhone] = useState();
+  const [code, setCode] = useState();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,6 +33,10 @@ export const UserInfo = () => {
       [name]: value,
     }));
   };
+
+  function handlePhone(data) {
+    console.log("date", data);
+  }
 
   const validateInput = async () => {
     const formError = {};
@@ -128,8 +133,14 @@ export const UserInfo = () => {
               <p className="text-red-800 w-[98%] mx-auto">{error.name}</p>
             )}
 
-            <PhoneVerify onChange={handleChange} />
-            <div className="recaptcha-container"></div>
+            <PhoneVerify
+              phone={phone}
+              setPhone={setPhone}
+              code={code}
+              setCode={setCode}
+              onVerified={() => setForm((prev) => ({ ...prev, phone }))}
+            />
+
             <label
               htmlFor="table"
               className="font-semibold ml-1 mb-1 mt-2 text-xl"

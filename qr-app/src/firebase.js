@@ -14,4 +14,3 @@ const firebaseConfig = {
 console.log("auth module loaded");
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-  

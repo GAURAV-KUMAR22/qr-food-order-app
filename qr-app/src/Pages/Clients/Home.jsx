@@ -13,7 +13,6 @@ import publicAxios from "../../Services/PublicAxios";
 import { socket } from "../../Services/Socket";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-// import { socket } from '../../Services/Socket';
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -23,6 +22,7 @@ export const Home = () => {
   const [latestOrder, setLatestOrder] = useState([]);
   const [popup, setPopup] = useState(false);
   const [user, setUser] = useState({});
+  const [bestSellingItem, setBestSellingItem] = useState([]);
   const navigate = useNavigate();
   // eslint-disable-next-line no-unused-vars
   const [clickCount, setClickCount] = useState(0);
@@ -52,6 +52,21 @@ export const Home = () => {
       return newCount;
     });
   };
+
+  // Fetch Best Selling Item
+
+  useEffect(() => {
+    async function Fetched() {
+      const response = await publicAxios.get("/products/best-selling-item");
+      console.log(response);
+      if (response.status === 200) {
+        setBestSellingItem(response.data.content);
+      }
+    }
+    Fetched();
+  }, []);
+
+  console.log(bestSellingItem);
 
   // Get products
   useEffect(() => {
@@ -203,8 +218,6 @@ export const Home = () => {
     setPopup((prev) => !prev);
   }
 
- 
-
   return (
     <div className=" max-w-[100%] mx-auto">
       <button onClick={handleAdminAccess} className="w-full ">
@@ -312,6 +325,7 @@ export const Home = () => {
             >
               {groupedProducts[categoryName]?.map((product) => (
                 <div key={product._id} className="min-w-[150px] flex-shrink-0">
+                  {console.log(product)}
                   <CardDetails
                     key={product._id}
                     id={product._id}
@@ -323,6 +337,7 @@ export const Home = () => {
                     onAddToCart={() => addToCarts(product)}
                     product={product}
                     stock={product.quantity ? product.quantity : 0}
+                    ratingValue={product.averageRating}
                   />
                 </div>
               ))}

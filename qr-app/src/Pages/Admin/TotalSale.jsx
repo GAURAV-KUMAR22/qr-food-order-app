@@ -12,6 +12,7 @@ export const TotalSale = () => {
   const [todayTotelRevenue, setTodayTotelRevenue] = useState(0);
   const [ShowFilter, setShowFilter] = useState(false);
 
+
   async function onFilter(query) {
     try {
       const res = await PrivateAxios.get(`/sales`, {
@@ -97,7 +98,7 @@ export const TotalSale = () => {
             </h2>
           </div>
         ) : (
-          <h1 className="text-center text-2xl text-red-500">Select   Filter</h1>
+          <h1 className="text-center text-2xl text-red-500">Select Filter</h1>
         )}
       </div>
     </div>

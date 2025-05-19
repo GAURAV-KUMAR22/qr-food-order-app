@@ -9,8 +9,12 @@ const ratingSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
   },
-  rating: Number,
-  review: String,
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

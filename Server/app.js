@@ -18,6 +18,7 @@ import helmet from "helmet";
 import compression from "compression";
 import ProtectedRoute from "./Service/ProtectedRoute.js";
 import "./Services/Cron/Resetqty.js";
+import "./Services/Cron/Resetqty.js";
 dotenv.config();
 const __Filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__Filename);

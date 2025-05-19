@@ -4,11 +4,7 @@ import PrivateAxios from "../../Services/PrivateAxios";
 import { Model } from "../../components/Model";
 import { ReverseButton } from "../../components/Client/ReverseButton";
 import publicAxios from "../../Services/PublicAxios";
-<<<<<<< Updated upstream
-=======
 import toast from "react-hot-toast";
-import { ImSpinner9 } from "react-icons/im";
->>>>>>> Stashed changes
 
 export const NewProduct = () => {
   const [catgory, setCategoryOption] = useState([]);
@@ -18,18 +14,14 @@ export const NewProduct = () => {
   const [image, setImageUrl] = useState();
   const navigate = useNavigate();
   const [error, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
   const location = useLocation();
   let product = location?.state?.product;
 
-<<<<<<< Updated upstream
-=======
   const BackendUrl =
     import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_BACKEND_PROD
       : import.meta.env.VITE_BACKEND_DEV;
 
->>>>>>> Stashed changes
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -42,9 +34,6 @@ export const NewProduct = () => {
   const validateInput = async () => {
     const formError = {};
 
-    if (!product.imageUrl && !picture) {
-      formError.picture = "Image Field is required";
-    }
     if (!form.name) {
       formError.name = "Name Field is required";
     }
@@ -128,7 +117,6 @@ export const NewProduct = () => {
   // post request for new Product save
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     const isValidate = await validateInput();
     if (isValidate) {
       let data = new FormData();
@@ -139,6 +127,7 @@ export const NewProduct = () => {
       data.append("price", form.price);
       data.append("quantity", form.quantity);
       console.log(data);
+
       const responce = product
         ? await PrivateAxios.put(`/products/${product._id}`, data, {
             headers: {
@@ -158,11 +147,7 @@ export const NewProduct = () => {
           price: "",
         });
         setPicture(null);
-<<<<<<< Updated upstream
-=======
         toast.success("New product Added");
-        setLoading(false);
->>>>>>> Stashed changes
         navigate("/admin");
       }
     }
@@ -195,6 +180,7 @@ export const NewProduct = () => {
   async function handleDelete(productId) {
     const responce = await publicAxios.delete(`/products/${productId}`);
     if (responce.status === 200) {
+      toast.success("Product deleted succussfully");
       navigate("/admin");
     }
   }
@@ -219,7 +205,6 @@ export const NewProduct = () => {
       )}
 
       {/* Form fields */}
-<<<<<<< Updated upstream
       <div className="w-[98%] sm:w-[50%] sm:mx-auto mx-2">
         <div className="w-full flex flex-col mx-auto sm:w-[70%]">
           <div className="flex flex-col mx-auto w-full sm:flex-row  justify-between gap-4 lg:items-center">
@@ -235,206 +220,166 @@ export const NewProduct = () => {
                       />
                     ) : product ? (
                       <img
-                        src={`${import.meta.env.VITE_BACKEND_URL}/${
-                          product.imageUrl
-                        }`}
+                        src={`${BackendUrl}/${product.imageUrl}`}
                         alt="file upload"
                         className="w-[50px] h-[50px] object-cover rounded-full"
                       />
                     ) : (
                       <img src="/public/assets/Vector2.png" alt="file upload" />
-=======
-      {loading ? (
-        <div className="flex justify-center items-center">
-          <ImSpinner9 size={75} className="animate-spin" />
-        </div>
-      ) : (
-        <>
-          <div className="w-[98%] sm:w-[50%] sm:mx-auto mx-2">
-            <div className="w-full flex flex-col mx-auto sm:w-[70%]">
-              <div className="flex flex-col mx-auto w-full sm:flex-row  justify-between gap-4 lg:items-center">
-                <div className="flex justify-start items-center">
-                  <div className="mr-5">
-                    <label htmlFor="file-upload" className="cursor-pointer">
-                      <div className=" bg-gray-600 w-[50px] h-[50px] object-contain rounded-full items-center justify-center flex ">
-                        {image && picture ? (
-                          <img
-                            src={image}
-                            alt="file upload"
-                            className="w-[50px] h-[50px] object-cover rounded-full"
-                          />
-                        ) : product ? (
-                          <img
-                            src={`${BackendUrl}/${product.imageUrl}`}
-                            alt="file upload"
-                            className="w-[50px] h-[50px] object-cover rounded-full"
-                          />
-                        ) : (
-                          <img
-                            src="/public/assets/Vector2.png"
-                            alt="file upload"
-                          />
-                        )}
-                      </div>
-                    </label>
-                    <input
-                      id="file-upload"
-                      type="file"
-                      name="file"
-                      hidden
-                      onChange={handleImage}
-                      required
-                    />
-                    {error.picture && (
-                      <p className="text-red-800 w-[98%] mx-auto">
-                        {error.picture}
-                      </p>
->>>>>>> Stashed changes
                     )}
                   </div>
-                  <div className="flex flex-col mx-auto my-auto sm:flex-row gap-2">
-                    <button
-                      onClick={handlePreviewImage}
-                      className="bg-[#F9D718] p-1  flex font-light items-center justify-center text-center rounded-md overflow-y-hidden"
-                    >
-                      {picture && picture.name
-                        ? picture.name
-                        : "Uploaded Image"}
+                </label>
+                <input
+                  id="file-upload"
+                  type="file"
+                  name="file"
+                  hidden
+                  onChange={handleImage}
+                  required
+                />
+                {error.picture && (
+                  <p className="text-red-800 w-[98%] mx-auto">
+                    {error.picture}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col mx-auto my-auto sm:flex-row gap-2">
+                <button
+                  onClick={handlePreviewImage}
+                  className="bg-[#F9D718] p-1  flex font-light items-center justify-center text-center rounded-md overflow-y-hidden"
+                >
+                  {picture && picture.name ? picture.name : "Uploaded Image"}
+                </button>
+                {picture && (
+                  <button
+                    className="bg-[#F9D718] p-1  flex font-light items-center justify-center text-center rounded-md  overflow-y-hidden"
+                    onClick={() => setPicture(null)}
+                    type="button"
+                  >
+                    Discard
+                  </button>
+                )}
+                {product && (
+                  <div className="bg-red-700 p-1  flex font-light items-center justify-center text-center rounded-md overflow-y-hidden">
+                    <button onClick={() => handleDelete(product._id)}>
+                      Delete
                     </button>
-                    {picture && (
-                      <button
-                        className="bg-[#F9D718] p-1  flex font-light items-center justify-center text-center rounded-md  overflow-y-hidden"
-                        onClick={() => setPicture(null)}
-                        type="button"
-                      >
-                        Discard
-                      </button>
-                    )}
-                    {product && (
-                      <div className="bg-red-700 p-1  flex font-light items-center justify-center text-center rounded-md overflow-y-hidden">
-                        <button onClick={() => handleDelete(product._id)}>
-                          Delete
-                        </button>
-                      </div>
-                    )}
                   </div>
-                </div>
+                )}
               </div>
             </div>
-            <form onSubmit={handleSubmit} className="flex flex-col  ">
-              <div className=" h-[67px] flex flex-col mb-2">
-                <label className="min-h-5">Product Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  onChange={handleForm}
-                  value={form.name}
-                  placeholder="Chinese Burger"
-                  required
-                  className="bg-[#F9F9F9] min-h-[40px] px-2"
-                />
-                {error.name && (
-                  <p className="text-red-800 w-[98%] mx-auto">{error.name}</p>
-                )}
-              </div>
-
-              <div className="w-full h-[67px] flex flex-col m-1">
-                <label className="min-h-5">Short Description</label>
-                <input
-                  type="text"
-                  name="description"
-                  onChange={handleForm}
-                  value={form.description}
-                  placeholder="Tasty and spicy"
-                  required
-                  className="bg-[#F9F9F9] min-h-[40px] px-2"
-                />
-                {error.description && (
-                  <p className="text-red-800 w-[98%] mx-auto">
-                    {error.description}
-                  </p>
-                )}
-              </div>
-
-              <div className="w-full h-[67px] flex flex-col m-1">
-                <label className="min-h-5">Category</label>
-                <select
-                  className="bg-[#F9F9F9] min-h-[40px] px-2"
-                  name="category"
-                  onChange={handleForm}
-                  value={form.category} // Ensure the select value is controlled by form.state
-                  required
-                >
-                  {error.category && (
-                    <p className="text-red-800 w-[98%] mx-auto">
-                      {error.category}
-                    </p>
-                  )}
-                  {/* "Choose Category" option */}
-                  <option value={product?.categoryId?.name}>
-                    {product ? product.categoryId?.name : "choose Category"}
-                  </option>
-                  {/* Render categories only if `catgory` has items */}
-                  {catgory.length > 0 &&
-                    catgory.map((category) => (
-                      <option key={category._id} value={category._id}>
-                        {category.name}
-                      </option>
-                    ))}
-                </select>
-              </div>
-
-              <div className="w-full h-[67px] flex flex-col m-1">
-                <label className="min-h-5">Quantity</label>
-                <input
-                  type="number"
-                  name="quantity"
-                  onChange={handleForm}
-                  value={form.quantity}
-                  placeholder="e.g. 10"
-                  required
-                  className="bg-[#F9F9F9] min-h-[40px] px-2"
-                />
-                {error.quantity && (
-                  <p className="text-red-800 w-[98%] mx-auto">
-                    {error.quantity}
-                  </p>
-                )}
-              </div>
-              <div className="w-full h-[67px] mb-15 flex flex-col m-1">
-                <label className="min-h-5">Prices (Rs.)</label>
-                <input
-                  type="number"
-                  name="price"
-                  onChange={handleForm}
-                  value={form.price}
-                  placeholder="e.g. 149"
-                  required
-                  className="bg-[#F9F9F9] min-h-[40px] px-2"
-                />
-                {error.price && (
-                  <p className="text-red-800 w-[98%] mx-auto">{error.price}</p>
-                )}
-              </div>
-              <div className="w-full flex justify-between min-h-[48px] mt-28 fixed bottom-2 left-0 right-0 bg-white shadow-md px-4 gap-4">
-                <button
-                  onClick={handleDiscard}
-                  className="w-[50%] bg-[#F2EFE3] rounded-md "
-                  type="button"
-                >
-                  Discard
-                </button>
-                <button
-                  onClick={handleSubmit}
-                  className="bg-[#F9D718] w-[50%]  rounded-md"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
           </div>
-        </>
-      )}
+        </div>
+        <form onSubmit={handleSubmit} className="flex flex-col  ">
+          <div className=" h-[67px] flex flex-col mb-2">
+            <label className="min-h-5">Product Name</label>
+            <input
+              type="text"
+              name="name"
+              onChange={handleForm}
+              value={form.name}
+              placeholder="Chinese Burger"
+              required
+              className="bg-[#F9F9F9] min-h-[40px] px-2"
+            />
+            {error.name && (
+              <p className="text-red-800 w-[98%] mx-auto">{error.name}</p>
+            )}
+          </div>
+
+          <div className="w-full h-[67px] flex flex-col m-1">
+            <label className="min-h-5">Short Description</label>
+            <input
+              type="text"
+              name="description"
+              onChange={handleForm}
+              value={form.description}
+              placeholder="Tasty and spicy"
+              required
+              className="bg-[#F9F9F9] min-h-[40px] px-2"
+            />
+            {error.description && (
+              <p className="text-red-800 w-[98%] mx-auto">
+                {error.description}
+              </p>
+            )}
+          </div>
+
+          <div className="w-full h-[67px] flex flex-col m-1">
+            <label className="min-h-5">Category</label>
+            <select
+              className="bg-[#F9F9F9] min-h-[40px] px-2"
+              name="category"
+              onChange={handleForm}
+              value={form.category} // Ensure the select value is controlled by form.state
+              required
+            >
+              {error.category && (
+                <p className="text-red-800 w-[98%] mx-auto">{error.category}</p>
+              )}
+              {/* "Choose Category" option */}
+              <option value={product?.categoryId?.name}>
+                {product ? product.categoryId?.name : "choose Category"}
+              </option>
+              {/* Render categories only if `catgory` has items */}
+              {catgory.length > 0 &&
+                catgory.map((category) => (
+                  <option key={category._id} value={category._id}>
+                    {category.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <div className="w-full h-[67px] flex flex-col m-1">
+            <label className="min-h-5">Quantity</label>
+            <input
+              type="number"
+              name="quantity"
+              onChange={handleForm}
+              value={form.quantity}
+              placeholder="e.g. 10"
+              required
+              className="bg-[#F9F9F9] min-h-[40px] px-2"
+            />
+            {error.quantity && (
+              <p className="text-red-800 w-[98%] mx-auto">{error.quantity}</p>
+            )}
+          </div>
+          <div className="w-full h-[67px] mb-15 flex flex-col m-1">
+            <label className="min-h-5">Prices (Rs.)</label>
+            <input
+              type="number"
+              name="price"
+              onChange={handleForm}
+              value={form.price}
+              placeholder="e.g. 149"
+              required
+              className="bg-[#F9F9F9] min-h-[40px] px-2"
+            />
+            {error.price && (
+              <p className="text-red-800 w-[98%] mx-auto">{error.price}</p>
+            )}
+          </div>
+          <div className="w-full flex justify-between min-h-[48px] mt-28 fixed bottom-2 left-0 right-0 bg-white shadow-md px-4 gap-4">
+            <button
+              onClick={handleDiscard}
+              className="w-[50%] bg-[#F2EFE3] rounded-md "
+              type="button"
+            >
+              Discard
+            </button>
+            <button
+              onClick={handleSubmit}
+              className="bg-[#F9D718] w-[50%]  rounded-md"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Action Buttons */}
     </div>
   );
 };

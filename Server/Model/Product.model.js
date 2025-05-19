@@ -16,6 +16,14 @@ const productSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
+    totalRatings: {
+      type: Number,
+      default: 0,
+    },
     createdAt: {
       type: Date,
       default: Date.now,

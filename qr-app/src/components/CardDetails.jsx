@@ -18,7 +18,7 @@ export const CardDetails = ({
   stock,
   fixedStock,
   data,
-  ratingChanged,
+  ratingValue,
 }) => {
   const backendUrl =
     import.meta.env.MODE === "Production"
@@ -34,9 +34,15 @@ export const CardDetails = ({
   let stockTag;
 
   async function ratingChanged(newRating) {
-    const userId = await localStorage.getItem("user");
-    console.log(userId, newRating, id);
-    // const responce = publicAxios("/products/rating", { productId:id,userId: });
+    const userId = await JSON.parse(localStorage.getItem("user"));
+    userId && console.log(userId._id, newRating, id);
+
+    const responce = await publicAxios.post("/products/rating", {
+      productId: id,
+      userId: userId._id,
+      rating: newRating,
+    });
+    console.log(responce);
   }
 
   if (stock === 0) {
@@ -92,7 +98,12 @@ export const CardDetails = ({
           count={5}
           onChange={ratingChanged}
           size={20}
+          isHalf={true}
+          emptyIcon={<i className="far fa-star"></i>}
+          halfIcon={<i className="fa fa-star-half-alt"></i>}
+          fullIcon={<i className="fa fa-star"></i>}
           activeColor="#ffd700"
+          value={ratingValue}
         />
       </div>
 
