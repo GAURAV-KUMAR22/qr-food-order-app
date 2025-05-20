@@ -56,7 +56,6 @@ export const DashBoardPage = () => {
       },
     };
   });
-  console.log(updatedSellingData);
 
   const grouped = updatedSellingData.reduce((acc, item) => {
     const category = item.category || "Uncategorized";
@@ -69,7 +68,6 @@ export const DashBoardPage = () => {
 
     return acc; // ✅ Don't forget to return accumulator
   }, {});
-  console.log(grouped);
 
   // Fetch All orders
   useEffect(() => {
@@ -131,7 +129,6 @@ export const DashBoardPage = () => {
       const responce = await publicAxios.get("/products/category", {
         signal: controller.signal,
       });
-      console.log(responce);
       if (responce.status !== 200) {
         throw new Error({ message: "responce failed" });
       }

@@ -43,16 +43,12 @@ export const CartPage = () => {
     };
     fetchData();
   }, []);
-  console.log(cartstate);
 
   useEffect(() => {
     cartstate.forEach((cartItem) => {
       const product = fetchedProduct.find((item) => item._id === cartItem._id);
       if (product) {
         if (cartItem.quantity > product.quantity) {
-          console.log(
-            `Available stock: ${product.quantity}, In cart: ${cartItem.quantity}`
-          );
           localStorage.removeItem("cart");
           dispatch(
             updateQuantity({ id: cartItem._id, quantity: product.stock })

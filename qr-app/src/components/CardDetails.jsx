@@ -32,8 +32,6 @@ export const CardDetails = ({
   const totelStock = fixedStock ? fixedStock : 0;
   let stockTag;
 
-  console.log("card detaiosssllsll", product);
-
   async function ratingChanged(newRating) {
     const userId = await JSON.parse(localStorage.getItem("user"));
 
@@ -42,13 +40,11 @@ export const CardDetails = ({
       userId: userId._id,
       rating: newRating,
     });
-    console.log(responce);
   }
 
   if (stock === 0) {
     stockTag = "OutOfStock";
   } else if (stock <= (totelStock / 100) * 10) {
-    console.log("stock", stock);
     stockTag = "lowStock";
   } else {
     stockTag = "InStock";

@@ -22,7 +22,6 @@ export const UserInfo = () => {
     phone: user?.phone || "",
     table: user?.table || "",
   });
-  console.log(form);
   const [isEditMode, setIsEditMode] = useState(!user);
   const [phone, setPhone] = useState();
   const [code, setCode] = useState();
@@ -34,10 +33,6 @@ export const UserInfo = () => {
       [name]: value,
     }));
   };
-
-  function handlePhone(data) {
-    console.log("date", data);
-  }
 
   const validateInput = async () => {
     const formError = {};

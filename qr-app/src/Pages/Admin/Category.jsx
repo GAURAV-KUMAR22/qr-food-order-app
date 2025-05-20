@@ -11,7 +11,6 @@ export const Category = () => {
       const responce = await PrivateAxios.get("/products/category", {
         signal: controller.signal,
       });
-      console.log(responce);
       setCategory(responce.data.content);
     }
     fetched();

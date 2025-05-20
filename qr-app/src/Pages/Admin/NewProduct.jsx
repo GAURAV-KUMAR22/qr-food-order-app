@@ -78,7 +78,6 @@ export const NewProduct = () => {
         });
 
         if (response.status === 200) {
-          console.log(response.data.content);
           setCategoryOption(response.data.content);
         } else {
           throw new Error("Response failed"); // FIXED: now it's a string
@@ -126,7 +125,6 @@ export const NewProduct = () => {
       data.append("category", form.category);
       data.append("price", form.price);
       data.append("quantity", form.quantity);
-      console.log(data);
 
       const responce = product
         ? await PrivateAxios.put(`/products/${product._id}`, data, {
@@ -170,7 +168,6 @@ export const NewProduct = () => {
   function handlePreviewImage() {
     if (picture) {
       const imageUrl = URL.createObjectURL(picture);
-      console.log(imageUrl);
       setShowImage((prev) => !prev);
       setPreview(imageUrl);
     }

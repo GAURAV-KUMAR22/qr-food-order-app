@@ -76,7 +76,6 @@ export const Home = () => {
       },
     };
   });
-  console.log(updatedSellingData);
 
   let grouped = updatedSellingData.reduce((acc, item) => {
     const category = item.category || "Uncategorized";
@@ -172,7 +171,6 @@ export const Home = () => {
     async function fetched(userId) {
       try {
         const res = await publicAxios.get(`/orders/${userId}`);
-        console.log(res);
 
         if (res.status !== 200) {
           throw new Error("Response failed");
@@ -191,7 +189,6 @@ export const Home = () => {
           return orderDate >= startOfDay && orderDate <= endOfDay;
         });
 
-        console.log(filteredOrders);
         setLatestOrder(filteredOrders);
       } catch (err) {
         console.error("Error fetching orders:", err);
@@ -230,7 +227,6 @@ export const Home = () => {
         setTimeout(() => {
           localStorage.removeItem("user");
           setUser(null);
-          console.log("User removed after 5 minutes.");
         }, delay);
       }
     }
@@ -404,7 +400,6 @@ export const Home = () => {
             >
               {groupedProducts[categoryName]?.map((product) => (
                 <div key={product._id} className="min-w-[150px] flex-shrink-0">
-                  {console.log(product)}
                   <CardDetails
                     key={product._id}
                     id={product._id}

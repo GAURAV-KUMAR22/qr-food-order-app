@@ -29,7 +29,6 @@ export const NewCategory = () => {
       [e.target.name]: e.target.value,
     });
   }
-  console.log(category);
 
   async function handleSubmit() {
     const Form = new FormData();
@@ -43,7 +42,6 @@ export const NewCategory = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log(responce);
       if (responce.status === 201) {
         setCategory(responce.data.content);
         naviagate("/admin");
