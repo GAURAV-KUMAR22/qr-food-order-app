@@ -22,7 +22,8 @@ export const Home = () => {
   const [latestOrder, setLatestOrder] = useState([]);
   const [popup, setPopup] = useState(false);
   const [user, setUser] = useState({});
-  const [bestSellingItem, setBestSellingItem] = useState([]);
+
+  const [SelingData, setSellingData] = useState([]);
   const navigate = useNavigate();
   // eslint-disable-next-line no-unused-vars
   const [clickCount, setClickCount] = useState(0);
@@ -54,19 +55,40 @@ export const Home = () => {
   };
 
   // Fetch Best Selling Item
-
   useEffect(() => {
-    async function Fetched() {
-      const response = await publicAxios.get("/products/best-selling-item");
-      console.log(response);
+    const fetchedBestSellingItem = async () => {
+      const response = await PrivateAxios.get("/sales/best-selling-item");
       if (response.status === 200) {
-        setBestSellingItem(response.data.content);
+        setSellingData(response.data.content);
       }
-    }
-    Fetched();
+    };
+    fetchedBestSellingItem();
   }, []);
 
-  console.log(bestSellingItem);
+  const updatedSellingData = SelingData.map((item) => {
+    return {
+      ...item,
+      category: "Best-Selling", // ✅ Adds a new field
+      // or override nested field:
+      categoryId: {
+        ...item.categoryId,
+        name: "Best-Selling", // ✅ Updates the existing nested name
+      },
+    };
+  });
+  console.log(updatedSellingData);
+
+  let grouped = updatedSellingData.reduce((acc, item) => {
+    const category = item.category || "Uncategorized";
+
+    if (!acc[category]) {
+      acc[category] = []; // ✅ Initialize array
+    }
+
+    acc[category].push(item); // ✅ Now safely push the item
+
+    return acc; // ✅ Don't forget to return accumulator
+  }, {});
 
   // Get products
   useEffect(() => {
@@ -214,6 +236,16 @@ export const Home = () => {
     }
   }, [latestOrder]);
 
+  useEffect(() => {
+    const fetchedBestSellingItem = async () => {
+      const response = await publicAxios.get("/sales/best-selling-item");
+      if (response.status === 200) {
+        setSellingData(response.data.content);
+      }
+    };
+    fetchedBestSellingItem();
+  }, []);
+
   function handleShowOrder() {
     setPopup((prev) => !prev);
   }
@@ -304,6 +336,49 @@ export const Home = () => {
       </div>
 
       <div className="mb-12">
+        {Object.keys(grouped).map((categoryName) => (
+          <div key={categoryName} className="category-section mb-2">
+            <div className="flex justify-between px-4 py-2">
+              <h2 className="text-[14px] font-semibold capitalize">
+                {categoryName}
+              </h2>
+              <Link
+                to={`/${categoryName}`}
+                state={{ items: groupedProducts[categoryName] }}
+                className="text-blue-500"
+              >
+                See More
+              </Link>
+            </div>
+
+            {/* Scrollable Product Cards */}
+            <div
+              className="w-full flex overflow-x-auto gap-4 px-4 pb-2"
+              style={{
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              }}
+            >
+              {grouped[categoryName].map((product) => (
+                <div
+                  key={product._id}
+                  className="min-w-[150px] max-w-[180px] flex-shrink-0"
+                >
+                  <CardDetails
+                    id={product._id}
+                    category={product.categoryId?.name}
+                    dishName={product.name}
+                    price={product.price || 100}
+                    qty={product.quantity} // Adjusted to use `quantity`
+                    image={product.imageUrl}
+                    onAddToCart={() => addToCarts(product)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+
         {Object.keys(groupedProducts).map((categoryName) => (
           <div key={categoryName} className="category-section mb-2">
             <div className="flex justify-between px-4 py-2">

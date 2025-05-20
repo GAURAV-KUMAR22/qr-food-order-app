@@ -215,7 +215,6 @@ export const profileUser = async (req, res) => {
 export const getChechAuthentication = async (req, res) => {
   const loginUser = req.user;
   try {
-    console.log(loginUser);
     const loginUserVerify = await Admin.findById(loginUser._id);
     if (!loginUserVerify) {
       return res.status(400).json({

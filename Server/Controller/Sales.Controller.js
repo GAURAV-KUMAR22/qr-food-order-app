@@ -1,3 +1,4 @@
+import Product from "../Model/Product.model.js";
 import Sales from "../Model/Sales.model.js";
 
 export const getAllSales = async (req, res) => {
@@ -100,5 +101,33 @@ export const getAllSales = async (req, res) => {
   } catch (error) {
     console.error("Error fetching sales:", error);
     return res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
+export const getBestSellingItem = async (req, res) => {
+  console.log("salesData");
+  try {
+    const salesData = await Sales.aggregate([
+      { $unwind: "$bestSellingItems" },
+      {
+        $group: {
+          _id: "$bestSellingItems.productId",
+          name: { $first: "$bestSellingItems.name" },
+          totalQuantitySold: { $sum: "$bestSellingItems.quantitySold" },
+        },
+      },
+      { $sort: { totalQuantitySold: -1 } },
+      { $limit: 5 },
+    ]);
+
+    const productIds = salesData.map((item) => item._id);
+    const products = await Product.find({
+      _id: { $in: productIds },
+    }).populate("categoryId");
+    console.log(products);
+
+    res.status(200).json({ content: products });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };

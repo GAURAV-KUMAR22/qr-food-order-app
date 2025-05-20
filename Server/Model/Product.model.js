@@ -12,7 +12,7 @@ const productSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
     },
-    available: {
+    available: {  
       type: Boolean,
       default: true,
     },
