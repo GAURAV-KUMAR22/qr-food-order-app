@@ -16,6 +16,7 @@ export const DashBoardPage = () => {
   const [AllSales, setAllSales] = useState([]);
   const [AllCategory, setAllCategory] = useState([]);
   const [todayOrders, setTodayOrders] = useState([]);
+  const [SelingData, setSellingData] = useState([]);
 
   // fetch All Products
   useEffect(() => {
@@ -33,6 +34,42 @@ export const DashBoardPage = () => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchedBestSellingItem = async () => {
+      const response = await PrivateAxios.get("/sales/best-selling-item");
+      if (response.status === 200) {
+        setSellingData(response.data.content);
+      }
+    };
+    fetchedBestSellingItem();
+  }, []);
+
+  const updatedSellingData = SelingData.map((item) => {
+    return {
+      ...item,
+      category: "Best-Selling", // ✅ Adds a new field
+      // or override nested field:
+      categoryId: {
+        ...item.categoryId,
+        name: "Best-Selling", // ✅ Updates the existing nested name
+      },
+    };
+  });
+  console.log(updatedSellingData);
+
+  const grouped = updatedSellingData.reduce((acc, item) => {
+    const category = item.category || "Uncategorized";
+
+    if (!acc[category]) {
+      acc[category] = []; // ✅ Initialize array
+    }
+
+    acc[category].push(item); // ✅ Now safely push the item
+
+    return acc; // ✅ Don't forget to return accumulator
+  }, {});
+  console.log(grouped);
 
   // Fetch All orders
   useEffect(() => {
@@ -55,15 +92,12 @@ export const DashBoardPage = () => {
         }
       }
     };
-
     fetchOrder();
     socket.emit("join-admin");
-
     const handleOrderUpdate = (data) => {
       playNotificationSound();
       fetchOrder();
     };
-
     socket.on("placed-order", handleOrderUpdate);
 
     return () => {
@@ -97,6 +131,7 @@ export const DashBoardPage = () => {
       const responce = await publicAxios.get("/products/category", {
         signal: controller.signal,
       });
+      console.log(responce);
       if (responce.status !== 200) {
         throw new Error({ message: "responce failed" });
       }
@@ -194,6 +229,48 @@ export const DashBoardPage = () => {
       {/* <Link to={'/admin/data-visualize'}>
                 <h2 className='flex flex-row text-center bg-green-200 h-9 justify-center items-center'>Graphical Persentation</h2>
             </Link> */}
+
+      {Object.keys(grouped).map((categoryName) => (
+        <div key={categoryName} className="category-section mb-6">
+          {/* Header */}
+          <div className="flex justify-between items-center px-4 py-2">
+            <h2 className="text-xl font-bold text-gray-800">{categoryName}</h2>
+            <Link
+              to={`/admin/${categoryName}`}
+              state={{ items: grouped[categoryName] }}
+              className="text-blue-600 hover:underline"
+            >
+              See More
+            </Link>
+          </div>
+
+          {/* Scrollable Product Cards */}
+          <div
+            className="w-full flex overflow-x-auto gap-4 px-4 pb-2"
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+          >
+            {grouped[categoryName].map((product) => (
+              <div
+                key={product._id}
+                className="min-w-[150px] max-w-[180px] flex-shrink-0"
+              >
+                <CardDetails
+                  id={product._id}
+                  category={product.categoryId?.name}
+                  dishName={product.name}
+                  price={product.price || 100}
+                  qty={product.quantity} // Adjusted to use `quantity`
+                  image={product.imageUrl}
+                  onAddToCart={() => addToCarts(product)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
 
       {Object.keys(groupedProducts).map((categoryName) => (
         <div key={categoryName} className="category-section mb-3">

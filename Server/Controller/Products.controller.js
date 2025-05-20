@@ -2,7 +2,6 @@ import Category from "../Model/Category.model.js";
 import Product from "../Model/Product.model.js";
 import User from "../Model/Admin.model.js";
 import Rating from "../Model/Ratings.model.js";
-import Sales from "../Model/Sales.model.js";
 
 export const getAllProducts = async (req, res) => {
   try {
@@ -203,18 +202,6 @@ export const postRating = async (req, res) => {
     res.status(201).json({ message: "Rating added successfully" });
   } catch (error) {
     console.error("Error posting rating:", error);
-    res.status(500).json({ message: "Internal Server Error", error });
-  }
-};
-
-export const getBestSellingItem = async (req, res) => {
-  console.log("best seling route");
-  try {
-    const Sales = await Sales.find().limit(5);
-    console.log(bestSelingItem);
-    const bestSelingItem = Sales.bestSelingItem;
-    res.status(200).json({ content: bestSelingItem });
-  } catch (error) {
     res.status(500).json({ message: "Internal Server Error", error });
   }
 };
