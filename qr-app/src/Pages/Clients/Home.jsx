@@ -365,6 +365,7 @@ export const Home = () => {
                   className="min-w-[150px] max-w-[180px] flex-shrink-0"
                 >
                   <CardDetails
+                    key={product._id}
                     id={product._id}
                     category={product.categoryId?.name}
                     dishName={product.name}
@@ -372,6 +373,8 @@ export const Home = () => {
                     qty={product.quantity} // Adjusted to use `quantity`
                     image={product.imageUrl}
                     onAddToCart={() => addToCarts(product)}
+                    product={product}
+                    stock={product.quantity ? product.quantity : 0}
                     ratingValue={product.averageRating}
                   />
                 </div>

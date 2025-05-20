@@ -32,6 +32,8 @@ export const CardDetails = ({
   const totelStock = fixedStock ? fixedStock : 0;
   let stockTag;
 
+  console.log("card detaiosssllsll", product);
+
   async function ratingChanged(newRating) {
     const userId = await JSON.parse(localStorage.getItem("user"));
 
@@ -86,12 +88,14 @@ export const CardDetails = ({
           alt="food"
           className="w-[80px] h-[80px] object-cover rounded-full"
         />
-        <h3 className="text-sm font-medium tracking-tighter mt-2 text-center capitalize">
-          {dishName}
-        </h3>
-        <p className="font-bold text-xs mt-1 text-center capitalize">
-          Rs. {price}/-
-        </p>
+        <Link to={`/product/${id}`} state={{ product }}>
+          <h3 className="text-sm font-medium tracking-tighter mt-2 text-center capitalize">
+            {dishName}
+          </h3>
+          <p className="font-bold text-xs mt-1 text-center capitalize">
+            Rs. {price}/-
+          </p>
+        </Link>
         <StarIcons
           count={5}
           onChange={ratingChanged}
