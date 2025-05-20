@@ -4,6 +4,7 @@ import publicAxios from "../../Services/PublicAxios";
 import { useSelector } from "react-redux";
 import { ReverseButton } from "../../components/Client/ReverseButton";
 import { PhoneVerify } from "../../components/Admin/PhoneVerify";
+import ErrorBoundary from "../../Util/ErrorBoundry";
 
 export const UserInfo = () => {
   const [searchParams] = useSearchParams();
@@ -132,14 +133,15 @@ export const UserInfo = () => {
             {error.name && (
               <p className="text-red-800 w-[98%] mx-auto">{error.name}</p>
             )}
-
-            <PhoneVerify
-              phone={phone}
-              setPhone={setPhone}
-              code={code}
-              setCode={setCode}
-              onVerified={() => setForm((prev) => ({ ...prev, phone }))}
-            />
+            <ErrorBoundary>
+              <PhoneVerify
+                phone={phone}
+                setPhone={setPhone}
+                code={code}
+                setCode={setCode}
+                onVerified={() => setForm((prev) => ({ ...prev, phone }))}
+              />
+            </ErrorBoundary>
 
             <label
               htmlFor="table"

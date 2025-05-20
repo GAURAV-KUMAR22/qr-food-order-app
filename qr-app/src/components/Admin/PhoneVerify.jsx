@@ -1,36 +1,57 @@
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { auth } from "../../firebase";
 
 export const PhoneVerify = ({ phone, setPhone, code, setCode, onVerified }) => {
   const [confirmationResult, setConfirmationResult] = useState(null);
+  const recaptchaRef = useRef(null);
 
-  // Setup reCAPTCHA verifier
-  const setupReCaptcha = () => {
+  // Setup reCAPTCHA only once
+  useEffect(() => {
     if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
-        auth, // This must be the third argument
-        "recaptcha-container", // ID of the container div
-        {}
+        auth,
+        "recaptcha-container",
+        {
+          size: "normal",
+          callback: () => {
+            // reCAPTCHA solved - maybe auto-send OTP
+          },
+          "expired-callback": () => {
+            alert("reCAPTCHA expired. Please refresh and try again.");
+            window.recaptchaVerifier.clear();
+            delete window.recaptchaVerifier;
+          },
+        }
       );
+      window.recaptchaVerifier.render().then((widgetId) => {
+        window.recaptchaWidgetId = widgetId;
+      });
     }
-    return window.recaptchaVerifier;
-  };
+  }, []);
 
   // Send OTP
   const sendOTP = async (e) => {
     e.preventDefault();
+
     if (!phone.startsWith("+")) return alert("Include country code e.g. +91");
 
-    const appVerifier = setupReCaptcha();
-
     try {
-      const result = await signInWithPhoneNumber(auth, phone, appVerifier);
+      const result = await signInWithPhoneNumber(
+        auth,
+        phone,
+        window.recaptchaVerifier
+      );
       setConfirmationResult(result);
       alert("OTP sent successfully!");
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP: " + error.message);
+      // Optional: Reset captcha
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+        delete window.recaptchaVerifier;
+      }
     }
   };
 
@@ -65,7 +86,8 @@ export const PhoneVerify = ({ phone, setPhone, code, setCode, onVerified }) => {
       >
         Send OTP
       </button>
-      <div id="recaptcha-container" className="my-2" />
+
+      <div ref={recaptchaRef} id="recaptcha-container" className="my-2" />
 
       <input
         type="text"
