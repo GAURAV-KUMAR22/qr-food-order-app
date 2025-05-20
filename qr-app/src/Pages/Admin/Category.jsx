@@ -20,6 +20,10 @@ export const Category = () => {
     };
   }, []);
 
+  const BeackendUrl =
+    import.meta.env.VITE_MODE === "Production"
+      ? import.meta.env.VITE_BACKEND_PROD
+      : import.meta.env.VITE_BACKEND_DEV;
   return (
     <div className="w-full">
       <div className="flex text-left p-4 ">
@@ -31,7 +35,7 @@ export const Category = () => {
           <div key={item._id} className=" w-[100px] h-[100px] transform-3d ">
             <div className="bg-[#D9D9D9] flex justify-center items-center  w-[90%] h-[90%] rounded-full  ">
               <img
-                src={`${import.meta.env.VITE_BACKEND_URL}/${item.imageUrl}`}
+                src={`${BeackendUrl}/${item.imageUrl}`}
                 alt=" chole"
                 className="w-[70px] h-[70px] rounded-full -translate-z-6 items-center flex justify-center"
               />

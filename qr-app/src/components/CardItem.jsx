@@ -4,7 +4,7 @@ import "../Pages/Clients/Home.css";
 
 export const CardItem = ({ name, imgPath }) => {
   const backendUrl =
-    import.meta.env.MODE === "Production"
+    import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_BACKEND_PROD
       : import.meta.env.VITE_BACKEND_DEV;
 

@@ -28,14 +28,12 @@ export const CardDetails = ({
   const timerRef = useRef(null);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const [rating, setRating] = useState();
 
   const totelStock = fixedStock ? fixedStock : 0;
   let stockTag;
 
   async function ratingChanged(newRating) {
     const userId = await JSON.parse(localStorage.getItem("user"));
-    userId && console.log(userId._id, newRating, id);
 
     const responce = await publicAxios.post("/products/rating", {
       productId: id,
