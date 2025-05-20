@@ -13,6 +13,7 @@ import publicAxios from "../../Services/PublicAxios";
 import { socket } from "../../Services/Socket";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import PrivateAxios from "../../Services/PrivateAxios";
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -88,7 +89,7 @@ export const Home = () => {
 
     return acc; // ✅ Don't forget to return accumulator
   }, {});
-
+  console.log(grouped);
   // Get products
   useEffect(() => {
     const controller = new AbortController();
@@ -309,6 +310,7 @@ export const Home = () => {
               </Link>
             </div>
 
+            {/* Filtered Item  */}
             <div className="flex overflow-x-auto h-[200px] space-x-4 px-4">
               {filteredGroupedProducts[categoryName]?.map((product) => (
                 <div key={product._id} className="min-w-[150px] flex-shrink-0">
@@ -327,6 +329,7 @@ export const Home = () => {
           </div>
         ))}
 
+      {/* Category image and name */}
       <div className="">
         <CategoryCard uniqueCategories={uniqueCategories} products={products} />
       </div>
@@ -340,7 +343,7 @@ export const Home = () => {
               </h2>
               <Link
                 to={`/${categoryName}`}
-                state={{ items: groupedProducts[categoryName] }}
+                state={{ items: grouped[categoryName] }}
                 className="text-blue-500"
               >
                 See More
