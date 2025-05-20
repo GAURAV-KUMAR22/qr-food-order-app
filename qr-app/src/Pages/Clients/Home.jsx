@@ -372,6 +372,7 @@ export const Home = () => {
                     qty={product.quantity} // Adjusted to use `quantity`
                     image={product.imageUrl}
                     onAddToCart={() => addToCarts(product)}
+                    ratingValue={product.averageRating}
                   />
                 </div>
               ))}

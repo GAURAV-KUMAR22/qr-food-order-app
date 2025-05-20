@@ -234,7 +234,9 @@ export const DashBoardPage = () => {
         <div key={categoryName} className="category-section mb-6">
           {/* Header */}
           <div className="flex justify-between items-center px-4 py-2">
-            <h2 className="text-xl font-bold text-gray-800">{categoryName}</h2>
+            <h2 className="text-xl font-semibold text-gray-800">
+              {categoryName}
+            </h2>
             <Link
               to={`/admin/${categoryName}`}
               state={{ items: grouped[categoryName] }}
@@ -258,13 +260,19 @@ export const DashBoardPage = () => {
                 className="min-w-[150px] max-w-[180px] flex-shrink-0"
               >
                 <CardDetails
+                  key={product._id}
                   id={product._id}
                   category={product.categoryId?.name}
                   dishName={product.name}
                   price={product.price || 100}
                   qty={product.quantity} // Adjusted to use `quantity`
                   image={product.imageUrl}
-                  onAddToCart={() => addToCarts(product)}
+                  product={product}
+                  button={true}
+                  css="h-[245px]"
+                  stock={product.quantity ? product.quantity : 0}
+                  fixedStock={product.totelQuantity ? product.totelQuantity : 0}
+                  data={product}
                 />
               </div>
             ))}
