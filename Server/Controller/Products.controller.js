@@ -162,7 +162,6 @@ export const deleteProduct = async (req, res) => {
   const { productId } = req.params;
   try {
     const deleteProduct = await Product.findByIdAndDelete(productId);
-    console.log(deleteProduct);
     res.status(200).json({ message: "deleted succussfully" });
   } catch (error) {
     res.status(500).json({ message: "Internal server Error", error });
@@ -201,7 +200,6 @@ export const postRating = async (req, res) => {
 
     res.status(201).json({ message: "Rating added successfully" });
   } catch (error) {
-    console.error("Error posting rating:", error);
     res.status(500).json({ message: "Internal Server Error", error });
   }
 };

@@ -12,7 +12,6 @@ export const TotalSale = () => {
   const [todayTotelRevenue, setTodayTotelRevenue] = useState(0);
   const [ShowFilter, setShowFilter] = useState(false);
 
-
   async function onFilter(query) {
     try {
       const res = await PrivateAxios.get(`/sales`, {
@@ -49,8 +48,6 @@ export const TotalSale = () => {
     });
     setSaleToday(todaySales);
   }, [salesData]);
-
-  console.log(salesData);
 
   // Calculate today's total revenue
   useEffect(() => {

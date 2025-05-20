@@ -105,7 +105,6 @@ export const getAllSales = async (req, res) => {
 };
 
 export const getBestSellingItem = async (req, res) => {
-  console.log("salesData");
   try {
     const salesData = await Sales.aggregate([
       { $unwind: "$bestSellingItems" },
@@ -124,7 +123,6 @@ export const getBestSellingItem = async (req, res) => {
     const products = await Product.find({
       _id: { $in: productIds },
     }).populate("categoryId");
-    console.log(products);
 
     res.status(200).json({ content: products });
   } catch (error) {

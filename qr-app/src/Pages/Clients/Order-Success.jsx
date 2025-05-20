@@ -9,7 +9,6 @@ export const OrderSuccess = () => {
   const [orders, setOrder] = useState(null);
   const [user, setUser] = useState([]);
   const [showOlderOrders, setShowOlderOrders] = useState(false); // state to control showing older orders
-  console.log(orders);
 
   async function fetched(userId) {
     try {
@@ -36,7 +35,6 @@ export const OrderSuccess = () => {
     socket.emit("join-admin");
 
     const handleOrderUpdate = (data) => {
-      console.log("Admin received order update:", data);
       if (existingUser) {
         fetched(existingUser._id); // Use stored user directly
       }
@@ -57,21 +55,16 @@ export const OrderSuccess = () => {
       const allDelivered =
         orders && orders.every((order) => order.status === "delivered");
 
-      console.log(allDelivered);
       if (allDelivered) {
         const delay = 10 * 60 * 1000;
 
         setTimeout(() => {
           localStorage.removeItem("user");
           setUser(null);
-          console.log("User removed after 5 minutes.");
         }, delay);
       }
     }
   }, [orders]);
-
-  console.log(orders);
-  console.log(user);
 
   // Filter orders based on status
   const incompleteOrders = orders?.filter(
@@ -80,8 +73,6 @@ export const OrderSuccess = () => {
   const completedOrders = orders?.filter(
     (order) => order.status === "delivered"
   );
-
-  console.log(completedOrders);
 
   return (
     <div className="w-[98%] mx-auto flex flex-col items-center justify-center bg-green-50 p-4">

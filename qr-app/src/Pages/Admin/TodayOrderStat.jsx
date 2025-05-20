@@ -6,7 +6,6 @@ export const TodayOrderStat = () => {
   const location = useLocation();
   const items = location.state.items;
 
-  console.log(items);
   return (
     <div className="w-[98%] flex flex-col mx-auto">
       <div className="w-[98%] flex flex-col mx-auto mt-1.5">

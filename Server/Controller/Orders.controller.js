@@ -73,11 +73,9 @@ export const postOrder = async (req, res) => {
 
     // Update the quantities of the products in the inventory
     try {
-      console.log(items);
       if (items.length > 0) {
         // Use Promise.all to handle multiple async operations
         const updatePromises = items.map((item) => {
-          console.log(item.productId);
           return Product.findByIdAndUpdate(
             item.productId,
             { $inc: { quantity: -item.quantity } }, // Decrease quantity
@@ -89,7 +87,6 @@ export const postOrder = async (req, res) => {
         await Promise.all(updatePromises);
       }
     } catch (error) {
-      console.log("Error updating product quantities:", error);
       return res
         .status(500)
         .json({ message: "Error updating product quantities" });
@@ -102,7 +99,6 @@ export const postOrder = async (req, res) => {
       .status(201)
       .json({ message: "Order successfully placed", order: newOrder });
   } catch (error) {
-    console.log("Internal server error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -110,7 +106,6 @@ export const postOrder = async (req, res) => {
 export const updateOrder = async (req, res) => {
   const { id } = req.params;
   const { status, productIds, paymentMethod } = req.body;
-  console.log(paymentMethod);
   if (!id) {
     return res.status(400).json({ message: "OrderId is not found" });
   }
@@ -144,7 +139,6 @@ export const updateOrder = async (req, res) => {
             });
           }
         }
-        console.log(quantityMap.values());
         const bestSellingItems = Array.from(quantityMap.values());
 
         const productObjectIds = Array.from(
@@ -184,16 +178,13 @@ export const updateOrder = async (req, res) => {
             }
           })
         );
-        console.log("All quantities updated successfully");
       } catch (error) {
-        console.error("Error updating stock:", error);
         return res.status(500).json({ message: "Error updating stock" });
       }
     }
 
     res.status(200).json({ message: "Order updated successfully", order });
   } catch (error) {
-    console.error("Error updating order:", error);
     res.status(500).json({ message: "Internal server error", error });
   }
 };

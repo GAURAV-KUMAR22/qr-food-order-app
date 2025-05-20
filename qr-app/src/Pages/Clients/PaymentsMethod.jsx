@@ -10,10 +10,6 @@ export const PaymentsMethod = () => {
   const [searchParams] = useSearchParams();
   const userId = searchParams.get("userId");
 
-  // const [order, setOrder] = useState('');
-  // console.log("order", order.productId)
-  console.log(cart);
-
   // totel Price
   const totalPrice =
     cart?.reduce(
@@ -22,8 +18,6 @@ export const PaymentsMethod = () => {
         (item.price ? item.price : 0) * (item.quantity ? item.quantity : 0),
       0
     ) || 0;
-
-  console.log(totalPrice);
 
   return (
     <div className="payment-method">

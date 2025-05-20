@@ -52,12 +52,9 @@ export const putUser = async (req, res) => {
     return res.status(400).json({ message: "Phone number must be 10 digits" });
   }
 
-  console.log(name, phone, table);
-
   try {
     // Find the existing user by phone
     const existingUser = await User.findOne({ phone });
-    console.log(existingUser);
 
     if (!existingUser) {
       return res.status(400).json({ message: "User not found" });

@@ -18,7 +18,6 @@ export const OrderUpdate = () => {
     setFilterOrder(res.data.content);
   };
 
-  console.log(filterdPendingOrders);
   useEffect(() => {
     socket.emit("join-admin");
     // Initially fetch pending orders
@@ -47,7 +46,6 @@ export const OrderUpdate = () => {
     try {
       socket.emit("join-admin");
       const productIds = order.items?.map((item) => item);
-      console.log(productIds);
       const response = await PrivateAxios.patch(`/orders/${orderId}`, {
         status,
         productIds,
