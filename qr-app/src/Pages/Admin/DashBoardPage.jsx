@@ -76,7 +76,7 @@ export const DashBoardPage = () => {
 
     const fetchOrder = async () => {
       try {
-        const response = await PrivateAxios.get("/orders/active-orders", {
+        const response = await publicAxios.get("/orders/active-orders", {
           signal: controller.signal,
         });
 
@@ -144,7 +144,7 @@ export const DashBoardPage = () => {
   useEffect(() => {
     const fetchingTodayorders = async () => {
       try {
-        const todatOrders = await PrivateAxios.get("/orders/today-orders");
+        const todatOrders = await publicAxios.get("/orders/today-orders");
         setTodayOrders(todatOrders.data.content);
       } catch (error) {
         throw new Error({ messsage: "Responce failed" });
