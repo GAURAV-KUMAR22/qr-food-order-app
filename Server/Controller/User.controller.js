@@ -142,10 +142,10 @@ export const LoginUser = async (req, res) => {
     };
     const token = jwt.sign(payload, process.env.JWTSECRET);
     res.cookie("token", token, {
-      httpOnly: false,
-      secure: false,
-      sameSite: process.env.MODE === "Production" ? "Strict" : "Lax",
-      maxAge: 24 * 60 * 60 * 1000, // 1 day in ms
+      httpOnly: true,
+      secure: true, // ✅ required on HTTPS
+      sameSite: "None", // ✅ required for cross-site cookie
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
     res
