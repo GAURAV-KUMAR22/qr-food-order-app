@@ -14,6 +14,8 @@ import { socket } from "../../Services/Socket";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import PrivateAxios from "../../Services/PrivateAxios";
+import { SearchInput } from "../../components/Client/SearchInput";
+import { CardView } from "../../components/Client/CardView";
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -33,9 +35,8 @@ export const Home = () => {
   const handleAdminAccess = () => {
     setClickCount((prev) => {
       const newCount = prev + 1;
-
       if (newCount === 10) {
-        toast("🦄 Admin Mode Activated", {
+        toast("Admin Mode Activated", {
           position: "top-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -66,6 +67,7 @@ export const Home = () => {
     fetchedBestSellingItem();
   }, []);
 
+  // Best Selling Item Logic
   const updatedSellingData = SelingData.map((item) => {
     return {
       ...item,
@@ -77,19 +79,15 @@ export const Home = () => {
       },
     };
   });
-
   let grouped = updatedSellingData.reduce((acc, item) => {
     const category = item.category || "Uncategorized";
-
     if (!acc[category]) {
       acc[category] = []; // ✅ Initialize array
     }
-
     acc[category].push(item); // ✅ Now safely push the item
-
     return acc; // ✅ Don't forget to return accumulator
   }, {});
-  console.log(grouped);
+
   // Get products
   useEffect(() => {
     const controller = new AbortController();
@@ -134,6 +132,7 @@ export const Home = () => {
     ).values(),
   ];
 
+  // Add to card functionality
   const addToCarts = async (product) => {
     if (product.quantity > 0) {
       toast.success("Product added to cart successfully!");
@@ -163,6 +162,7 @@ export const Home = () => {
     {}
   );
 
+  // Update Order
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const existingUser = storedUser ? JSON.parse(storedUser) : null;
@@ -214,6 +214,7 @@ export const Home = () => {
     }
   }, []);
 
+  // Logout User after order
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
 
@@ -233,6 +234,7 @@ export const Home = () => {
     }
   }, [latestOrder]);
 
+  // Best Selling Item fetched
   useEffect(() => {
     const fetchedBestSellingItem = async () => {
       const response = await publicAxios.get("/sales/best-selling-item");
@@ -243,12 +245,13 @@ export const Home = () => {
     fetchedBestSellingItem();
   }, []);
 
+  // Show Order Status Button
   function handleShowOrder() {
     setPopup((prev) => !prev);
   }
-
   return (
     <div className=" max-w-[100%] mx-auto">
+      {/* Cover Image */}
       <button onClick={handleAdminAccess} className="w-full ">
         <img
           src="/assets/cover.png"
@@ -257,6 +260,7 @@ export const Home = () => {
         />
       </button>
 
+      {/* Show popup If User Logged In */}
       {user && (
         <div className="fixed right-0 top-5 w-14 h-8 bg-yellow-300 rounded-full object-contain flex justify-center items-center text-center ">
           <button onClick={handleShowOrder} className="">
@@ -276,151 +280,18 @@ export const Home = () => {
         </div>
       )}
 
-      <div className="search-container min-w-[90% ] items-start">
-        <p className="flex justify-start mb-3 pl-1">
-          Choose the best dish for you
-        </p>
-        <div className="flex flex-row items-center gap-2 flex-shrink-0 border border-gray-500 w-[100%] h-[40px] text-start rounded-xl pl-3 ">
-          <img
-            src="/assets/lenspng.svg"
-            alt="lens"
-            className="w-[16px] h-[16px]"
-          />
-          <input
-            type="search"
-            name="search"
-            placeholder="Search"
-            onChange={(e) => setSearch(e.target.value)}
-            className="pr-2 border-none w-[100%] h-[40px] bg-transparent outline-none"
-          ></input>
-        </div>
-      </div>
-
-      {search &&
-        Object.keys(filteredGroupedProducts)?.map((categoryName) => (
-          <div key={categoryName} className="category-section mb-3">
-            <div className="flex justify-between px-4 py-2">
-              <h2 className="text-xl font-semibold">{categoryName}</h2>
-              <Link
-                to={`/${categoryName}`}
-                state={{ items: filteredGroupedProducts[categoryName] }}
-                className="text-blue-500"
-              >
-                See More
-              </Link>
-            </div>
-
-            {/* Filtered Item  */}
-            <div className="flex overflow-x-auto h-[200px] space-x-4 px-4">
-              {filteredGroupedProducts[categoryName]?.map((product) => (
-                <div key={product._id} className="min-w-[150px] flex-shrink-0">
-                  <CardDetails
-                    id={product._id}
-                    category={product.categoryId?.name}
-                    dishName={product.name}
-                    price={product.price || 100}
-                    qty={product.quantity} // Adjusted to use `quantity`
-                    image={product.imageUrl}
-                    onAddToCart={() => addToCarts(product)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+      {/* Search Input */}
+      <SearchInput setSearch={setSearch} />
 
       {/* Category image and name */}
-      <div className="">
-        <CategoryCard uniqueCategories={uniqueCategories} products={products} />
-      </div>
+      <CategoryCard uniqueCategories={uniqueCategories} products={products} />
+
+      {/* Search Items */}
+      {search && <CardView products={filteredGroupedProducts} />}
 
       <div className="mb-12">
-        {Object.keys(grouped).map((categoryName) => (
-          <div key={categoryName} className="category-section mb-2">
-            <div className="flex justify-between px-4 py-2">
-              <h2 className="text-[14px] font-semibold capitalize">
-                {categoryName}
-              </h2>
-              <Link
-                to={`/${categoryName}`}
-                state={{ items: grouped[categoryName] }}
-                className="text-blue-500"
-              >
-                See More
-              </Link>
-            </div>
-
-            {/* Scrollable Product Cards */}
-            <div
-              className="w-full flex overflow-x-auto gap-4 px-4 pb-2"
-              style={{
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
-              }}
-            >
-              {grouped[categoryName].map((product) => (
-                <div
-                  key={product._id}
-                  className="min-w-[150px] max-w-[180px] flex-shrink-0"
-                >
-                  <CardDetails
-                    key={product._id}
-                    id={product._id}
-                    category={product.categoryId?.name}
-                    dishName={product.name}
-                    price={product.price || 100}
-                    qty={product.quantity} // Adjusted to use `quantity`
-                    image={product.imageUrl}
-                    onAddToCart={() => addToCarts(product)}
-                    product={product}
-                    stock={product.quantity ? product.quantity : 0}
-                    ratingValue={product.averageRating}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-
-        {Object.keys(groupedProducts).map((categoryName) => (
-          <div key={categoryName} className="category-section mb-2">
-            <div className="flex justify-between px-4 py-2">
-              <h2 className="text-[14px] font-semibold capitalize">
-                {categoryName}
-              </h2>
-              <Link
-                to={`/${categoryName}`}
-                state={{ items: groupedProducts[categoryName] }}
-                className="text-blue-500"
-              >
-                See More
-              </Link>
-            </div>
-
-            <div
-              className="flex overflow-x-auto min-h-[200px]  space-x-4 px-4 scrollbar-hide"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-            >
-              {groupedProducts[categoryName]?.map((product) => (
-                <div key={product._id} className="min-w-[150px] flex-shrink-0">
-                  <CardDetails
-                    key={product._id}
-                    id={product._id}
-                    category={product.categoryId?.name}
-                    dishName={product.name}
-                    price={product.price || 100}
-                    qty={product.quantity} // Adjusted to use `quantity`
-                    image={product.imageUrl}
-                    onAddToCart={() => addToCarts(product)}
-                    product={product}
-                    stock={product.quantity ? product.quantity : 0}
-                    ratingValue={product.averageRating}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+        <CardView products={grouped} addToCarts={addToCarts} css={"h-300px"} />
+        <CardView products={groupedProducts} addToCarts={addToCarts} />
 
         <div className="fixed bottom-1 left-0 right-0 mx-auto bg-yellow-300 w-[97%] h-[48px] flex justify-center items-center">
           <Link

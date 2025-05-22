@@ -52,7 +52,7 @@ export const CardDetails = ({
 
   return (
     <div
-      className={`flex flex-col justify-end shadow-md hover:scale-105 ${css} my-0 sm:w-[190px]`}
+      className={`flex flex-col justify-end shadow-md hover:scale-102 ${css} my-0 sm:w-[190px] hover:overflow-hidden`}
       style={{
         scrollbarWidth: "none",
         msOverflowStyle: "none",
