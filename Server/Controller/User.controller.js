@@ -144,7 +144,7 @@ export const LoginUser = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: false,
       secure: false,
-      sameSite: process.env.MODE === "Production" ? "Strict" : "Lax",
+      sameSite: process.env.MODE === "Production" ? "None" : "Lax",
       maxAge: 24 * 60 * 60 * 1000, // 1 day in ms
     });
 
