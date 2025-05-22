@@ -59,7 +59,7 @@ export const CardDetails = ({
 
   return (
     <div
-      className={`flex flex-col justify-end shadow-md hover:scale-102 ${css} my-0 sm:w-[190px] transition-transform duration-200`}
+      className={`flex flex-col justify-end shadow-md hover:scale-102 ${css} h-[260px] my-0 sm:w-[190px] transition-transform duration-200`}
     >
       {/* Stock badge */}
       {isAuthenticated && (

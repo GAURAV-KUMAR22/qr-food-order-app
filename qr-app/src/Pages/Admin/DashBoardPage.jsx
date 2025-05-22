@@ -228,12 +228,16 @@ export const DashBoardPage = () => {
                 <h2 className='flex flex-row text-center bg-green-200 h-9 justify-center items-center'>Graphical Persentation</h2>
             </Link> */}
 
-      <CardView products={grouped} hideAddToCard={true} />
+      <CardView
+        products={grouped}
+        hideAddToCard={true}
+        cardCss={"h-[250px] my-4"}
+      />
 
       <CardView
         products={groupedProducts}
         hideAddToCard={true}
-        cardCss={"h-[245px]"}
+        cardCss={"h-[261px]"}
         css={"category-section mb-4 h-[250px]"}
       />
 
