@@ -38,7 +38,6 @@ export const Home = () => {
       if (newCount === 10) {
         toast.success("Admin panel");
         navigate("/signup");
-
         return 0;
       }
 

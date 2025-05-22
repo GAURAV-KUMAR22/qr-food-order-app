@@ -24,64 +24,65 @@ export const CardDetails = ({
     import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_BACKEND_PROD
       : import.meta.env.VITE_BACKEND_DEV;
+
   const [selected, setSelected] = useState(false);
   const timerRef = useRef(null);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  const totelStock = fixedStock ? fixedStock : 0;
+  const totalStock = fixedStock || 0;
+  const availableStock = stock ?? 0;
+
   let stockTag;
-
-  async function ratingChanged(newRating) {
-    const userId = await JSON.parse(localStorage.getItem("user"));
-
-    const responce = await publicAxios.post("/products/rating", {
-      productId: id,
-      userId: userId._id,
-      rating: newRating,
-    });
-  }
-
-  if (stock === 0) {
+  if (availableStock === 0) {
     stockTag = "OutOfStock";
-  } else if (stock <= (totelStock / 100) * 10) {
+  } else if (availableStock <= (totalStock / 100) * 10) {
     stockTag = "lowStock";
   } else {
     stockTag = "InStock";
   }
 
+  async function ratingChanged(newRating) {
+    try {
+      const userId = JSON.parse(localStorage.getItem("user"));
+      const response = await publicAxios.post("/products/rating", {
+        productId: id,
+        userId: userId._id,
+        rating: newRating,
+      });
+      // Optionally show toast or success
+    } catch (error) {
+      console.error("Rating failed:", error);
+      // Optionally show error toast
+    }
+  }
+
   return (
     <div
-      className={`flex flex-col justify-end shadow-md hover:scale-102 ${css} my-0 sm:w-[190px] hover:overflow-hidden`}
-      style={{
-        scrollbarWidth: "none",
-        msOverflowStyle: "none",
-      }}
+      className={`flex flex-col justify-end shadow-md hover:scale-102 ${css} my-0 sm:w-[190px] transition-transform duration-200`}
     >
-      {/* Stock tag aligned top-right using flex */}
-      {isAuthenticated && stock >= 0 && (
+      {/* Stock badge */}
+      {isAuthenticated && (
         <div className="flex justify-end w-full px-1 mt-0.5 pt-2">
           <div
-            className={`px-2 py-1.5 text-xs font-medium rounded-xl
-              ${
-                stockTag === "OutOfStock"
-                  ? "bg-[#DC3545]"
-                  : stockTag === "lowStock"
-                  ? "bg-[#FFA500]"
-                  : "bg-[#1DB954] text-white"
-              }`}
+            className={`px-2 py-1.5 text-xs font-medium rounded-xl text-white ${
+              stockTag === "OutOfStock"
+                ? "bg-[#DC3545]"
+                : stockTag === "lowStock"
+                ? "bg-[#FFA500]"
+                : "bg-[#1DB954]"
+            }`}
           >
-            {stockTag}
-            <span className="font-medium"> ({stock})</span>
+            {stockTag} <span className="font-medium">({availableStock})</span>
           </div>
         </div>
       )}
 
-      {/* Content wrapper */}
+      {/* Card content */}
       <div className="flex flex-col items-center justify-center pt-2 px-2 pb-1">
         <img
           src={`${backendUrl}/${image}`}
-          alt="food"
+          alt={dishName}
           className="w-[80px] h-[80px] object-cover rounded-full"
         />
         <Link to={`/product/${id}`} state={{ product }}>
@@ -105,20 +106,20 @@ export const CardDetails = ({
         />
       </div>
 
-      {/* Buttons */}
+      {/* Button section */}
       {!button && (
         <button
           className={`${
-            stock === 0 ? "pointer-events-none opacity-50" : ""
-          } w-[85%] font-semibold bg-yellow-300 mb-2 rounded-sm h-[35px] justify-center mx-auto mt-1`}
-          onClick={() => onAddToCart(category, id, price)}
+            availableStock === 0 ? "pointer-events-none opacity-50" : ""
+          } w-[85%] font-semibold bg-yellow-300 mb-2 rounded-sm h-[35px] mx-auto mt-1`}
+          onClick={() => onAddToCart(product)}
         >
           Add to cart
         </button>
       )}
       {button && (
         <Link
-          className="border w-[85%] mb-2 flex font-semibold rounded-sm h-[35px] justify-center mx-auto mt-1"
+          className="border w-[85%] mb-2 flex font-semibold rounded-sm h-[35px] justify-center items-center mx-auto mt-1"
           to={"/admin/createProduct"}
           state={{ product: data }}
         >
