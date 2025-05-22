@@ -12,7 +12,7 @@ export const CardView = ({
   css,
 }) => {
   return (
-    <div className={`${css} capitalize`}>
+    <div className={`${css}my-5 capitalize`}>
       {Object.keys(products)?.map((categoryName) => (
         <div key={categoryName} className="category-section">
           <div className="flex justify-between px-4 py-2">
@@ -30,7 +30,7 @@ export const CardView = ({
             {products[categoryName]?.map((product) => (
               <div
                 key={product._id}
-                className="min-w-[150px] h-[220px] flex-shrink-0"
+                className="min-w-[150px] h-[280px] flex-shrink-0"
               >
                 <CardDetails
                   id={product._id}
