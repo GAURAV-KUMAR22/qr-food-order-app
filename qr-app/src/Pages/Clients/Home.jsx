@@ -36,19 +36,8 @@ export const Home = () => {
     setClickCount((prev) => {
       const newCount = prev + 1;
       if (newCount === 10) {
-        toast("Admin Mode Activated", {
-          position: "top-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: false,
-          theme: "colored",
-          transition: Bounce,
-        });
+        toast.success("Admin panel");
         navigate("/signup");
-
         return 0;
       }
 

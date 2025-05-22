@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { CardDetails } from "../CardDetails";
+
 export const CardView = ({
   products,
   addToCarts,
@@ -11,13 +12,7 @@ export const CardView = ({
   css,
 }) => {
   return (
-    <div
-      className={`${css} capitalize `}
-      style={{
-        scrollbarWidth: "none",
-        msOverflowStyle: "none",
-      }}
-    >
+    <div className={`${css} capitalize`}>
       {Object.keys(products)?.map((categoryName) => (
         <div key={categoryName} className="category-section">
           <div className="flex justify-between px-4 py-2">
@@ -31,33 +26,26 @@ export const CardView = ({
             </Link>
           </div>
 
-          {/* Filtered Item  */}
-          <div
-            className={`flex overflow-x-auto  space-x-4 px-4 ${css}`}
-            style={{
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}
-          >
+          <div className="flex overflow-x-auto space-x-4 px-4 scrollbar-hide">
             {products[categoryName]?.map((product) => (
               <div
                 key={product._id}
                 className="min-w-[150px] h-[220px] flex-shrink-0"
               >
                 <CardDetails
-                  key={product._id}
                   id={product._id}
                   category={product.categoryId?.name}
                   dishName={product.name}
-                  price={product.price || 100}
-                  qty={product.quantity} // Adjusted to use `quantity`
+                  price={product.price}
                   image={product.imageUrl}
                   product={product}
                   button={hideAddToCard}
                   css={cardCss}
-                  stock={product.quantity ? product.quantity : 0}
-                  fixedStock={product.totelQuantity ? product.totelQuantity : 0}
+                  stock={product.quantity ?? 0}
+                  fixedStock={product.totelQuantity ?? 0}
                   data={product}
+                  onAddToCart={addToCarts}
+                  ratingValue={product.rating ?? 0}
                 />
               </div>
             ))}
