@@ -45,10 +45,12 @@ export const Home = () => {
     });
   };
 
+
   // Fetch Best Selling Item
   useEffect(() => {
     const fetchedBestSellingItem = async () => {
-      const response = await PrivateAxios.get("/sales/best-selling-item");
+      const response = await publicAxios.get("/sales/best-selling-item");
+
       if (response.status === 200) {
         setSellingData(response.data.content);
       }
@@ -76,6 +78,7 @@ export const Home = () => {
     acc[category].push(item); // ✅ Now safely push the item
     return acc; // ✅ Don't forget to return accumulator
   }, {});
+
 
   // Get products
   useEffect(() => {
@@ -239,8 +242,9 @@ export const Home = () => {
     setPopup((prev) => !prev);
   }
   return (
-    <div className=" max-w-[100%] mx-auto">
+    <div className=" max-w-[100%] mx-auto hide-scrollbar"  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
       {/* Cover Image */}
+
       <button onClick={handleAdminAccess} className="w-full ">
         <img
           src="/assets/cover.png"
@@ -279,8 +283,11 @@ export const Home = () => {
       {search && <CardView products={filteredGroupedProducts} />}
 
       <div className="mb-12">
-        <CardView products={grouped} addToCarts={addToCarts} css={"h-300px"} />
+
+     
+        <CardView products={grouped} addToCarts={addToCarts} css={"h-240px"} />
         <CardView products={groupedProducts} addToCarts={addToCarts} />
+
 
         <div className="fixed bottom-1 left-0 right-0 mx-auto bg-yellow-300 w-[97%] h-[48px] flex justify-center items-center">
           <Link

@@ -12,7 +12,8 @@ export const CardView = ({
   css,
 }) => {
   return (
-    <div className={`${css}my-5 capitalize`}>
+    <div className={`${css} my-5 capitalize`}  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+
       {Object.keys(products)?.map((categoryName) => (
         <div key={categoryName} className="category-section">
           <div className="flex justify-between px-4 py-2">
