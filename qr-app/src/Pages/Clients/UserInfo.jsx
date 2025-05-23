@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import publicAxios from "../../Services/PublicAxios";
 import { useSelector } from "react-redux";
 import { ReverseButton } from "../../components/Client/ReverseButton";
+import { PhoneVerify } from "../../components/Admin/PhoneVerify";
+import ErrorBoundary from "../../Util/ErrorBoundry";
 
 export const UserInfo = () => {
   const [searchParams] = useSearchParams();
@@ -21,6 +23,8 @@ export const UserInfo = () => {
     table: user?.table || "",
   });
   const [isEditMode, setIsEditMode] = useState(!user);
+  const [phone, setPhone] = useState();
+  const [code, setCode] = useState();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,13 +36,10 @@ export const UserInfo = () => {
 
   const validateInput = async () => {
     const formError = {};
-
     if (!form.name || form.name.trim() === "") {
       formError.name = "Name field is required";
     }
-
     const phoneStr = String(form.phone);
-
     if (
       !form.phone ||
       isNaN(form.phone) ||
@@ -48,18 +49,15 @@ export const UserInfo = () => {
       formError.phone =
         "Phone must be a positive number with at least 10 digits";
     }
-
     if (!form.table || isNaN(form.table) || Number(form.table) <= 0) {
       formError.table = "Table must be a positive number";
     }
-
     setErrors(formError);
     return Object.keys(formError).length === 0;
   };
 
   const handleSubmit = async () => {
     const isValid = await validateInput(); // ✅ await used
-
     if (isValid) {
       try {
         const response = user
@@ -76,10 +74,6 @@ export const UserInfo = () => {
         throw new Error({ message: "Api req failed", error });
       }
     }
-  };
-
-  const handleEdit = () => {
-    setIsEditMode(true);
   };
 
   const itemData = cartItems.map((item) => ({
@@ -134,25 +128,15 @@ export const UserInfo = () => {
             {error.name && (
               <p className="text-red-800 w-[98%] mx-auto">{error.name}</p>
             )}
-
-            <label
-              htmlFor="phone"
-              className="font-semibold ml-1 mb-1 mt-2 text-xl"
-            >
-              Phone
-            </label>
-            <input
-              type="text"
-              name="phone"
-              placeholder="Enter Phone Number"
-              required
-              onChange={handleChange}
-              value={form.phone}
-              className="w-full h-10 border rounded-md pl-1 border-gray-500"
-            />
-            {error.phone && (
-              <p className="text-red-800 w-[98%] mx-auto">{error.phone}</p>
-            )}
+            <ErrorBoundary>
+              <PhoneVerify
+                phone={phone}
+                setPhone={setPhone}
+                code={code}
+                setCode={setCode}
+                onVerified={() => setForm((prev) => ({ ...prev, phone }))}
+              />
+            </ErrorBoundary>
 
             <label
               htmlFor="table"
@@ -198,7 +182,7 @@ export const UserInfo = () => {
             <p className="text-lg font-medium mt-2">📞 Phone: {user.phone}</p>
             <button
               className="mt-4 bg-blue-400 text-white py-2 px-4 rounded"
-              onClick={handleEdit}
+              onClick={() => setIsEditMode(true)}
             >
               Edit
             </button>

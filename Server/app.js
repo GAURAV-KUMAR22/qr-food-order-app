@@ -19,11 +19,9 @@ import helmet from "helmet";
 import compression from "compression";
 import ProtectedRoute from "./Service/ProtectedRoute.js";
 import "./Services/Cron/Resetqty.js";
-<<<<<<< Updated upstream
-dotenv.config();
-=======
+
 import "./Services/Cron/Resetqty.js";
->>>>>>> Stashed changes
+
 const __Filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__Filename);
 
@@ -77,7 +75,7 @@ app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/products", ProductsRoute);
 app.use("/api/v1/carts", CartRoutes);
 app.use("/api/v1/orders", OrderRoutes);
-app.use("/api/v1/sales", ProtectedRoute, SalesRouter);
+app.use("/api/v1/sales", SalesRouter);
 
 app.use((err, req, res, next) => {
   if (res.headersSent) {

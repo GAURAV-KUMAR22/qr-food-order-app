@@ -1,34 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { data, Link } from "react-router-dom";
 import publicAxios from "../../Services/PublicAxios";
 import PrivateAxios from "../../Services/PrivateAxios";
+import { SalesFilter } from "../../components/Admin/SalesFilter";
+import { FcEmptyFilter } from "react-icons/fc";
 
 export const TotalSale = () => {
   const [salesData, setSaledData] = useState([]);
   const [todaySaleItem, setSaleToday] = useState([]);
   const [todayTotelRevenue, setTodayTotelRevenue] = useState(0);
+  const [ShowFilter, setShowFilter] = useState(false);
 
-  // Fetch all sales
-  useEffect(() => {
-    const controller = new AbortController();
-    const fetchData = async () => {
-      try {
-        const res = await PrivateAxios.get("/sales", {
-          signal: controller.signal,
-        });
-        if (res.status === 200) {
-          setSaledData(res.data.content);
-        }
-      } catch (error) {
-        if (error.code !== "ERR_CANCELED") {
-          console.error("Error fetching sales data:", error);
-        }
+  async function onFilter(query) {
+    try {
+      const res = await PrivateAxios.get(`/sales`, {
+        params: {
+          startDate: query.startDate,
+          endDate: query.endDate,
+          status: query.status,
+          category: query.category,
+          paymentMethod: query.paymentMethod,
+        },
+      });
+      if (res.status === 200) {
+        setSaledData(res.data.content);
       }
-    };
-    fetchData();
-    return () => controller.abort();
-  }, []);
+    } catch (error) {
+      if (error.code !== "ERR_CANCELED") {
+        console.error("Error fetching sales data:", error);
+      }
+    }
+  }
 
   // Calculate total sale
   const totalSale = salesData.reduce(
@@ -56,7 +59,7 @@ export const TotalSale = () => {
   }, [todaySaleItem]);
 
   return (
-    <div>
+    <div className="relative">
       <div className="flex m-1 text-xl mb-4 ">
         <Link to="/admin" className="flex flex-row items-center">
           <IoIosArrowBack />
@@ -64,20 +67,36 @@ export const TotalSale = () => {
         </Link>
       </div>
 
-      <div className="min-w-[345px] h-[250px] mx-3 overflow-hidden">
-        <div className="w-full bg-green-200 h-[50%] mb-2 flex flex-col justify-center">
-          <h2 className="text-2xl font-semibold text-center">Total Sale</h2>
-          <h2 className="text-xl font-bold text-center mt-2">
-            ₹ {totalSale || 0}
-          </h2>
-        </div>
+      <div className="absolute right-3 top-2.5 w-[80px] h-[30px] text-center items-center justify-center border rounded-md">
+        <button
+          className="flex font-semibold text-xl"
+          onClick={() => setShowFilter((prev) => !prev)}
+        >
+          Filter
+          <span>
+            <FcEmptyFilter size={25} />
+          </span>
+        </button>
+      </div>
 
-        <div className="w-full bg-yellow-200 h-[50%] flex flex-col justify-center">
-          <h2 className="text-2xl font-semibold text-center">Today's Sale</h2>
-          <h2 className="text-xl font-bold text-center mt-2">
-            ₹ {todayTotelRevenue || 0}
-          </h2>
-        </div>
+      <div className="min-w-[345px] h-[400px] mx-3 overflow-hidden ">
+        {ShowFilter && (
+          <div className="p-4 bg-gray-100 rounded-md shadow-sm">
+            <h2 className="text-lg font-semibold mb-2">Sales Filter</h2>
+            <SalesFilter onFilter={onFilter} />
+          </div>
+        )}
+
+        {totalSale ? (
+          <div className="w-full bg-green-200 h-[50%] mb-2 flex flex-col justify-center">
+            <h2 className="text-2xl font-semibold text-center">Total Sale</h2>
+            <h2 className="text-xl font-bold text-center mt-2">
+              ₹ {totalSale || 0}
+            </h2>
+          </div>
+        ) : (
+          <h1 className="text-center text-2xl text-red-500">Select Filter</h1>
+        )}
       </div>
     </div>
   );

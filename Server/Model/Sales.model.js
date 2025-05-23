@@ -1,21 +1,27 @@
 import mongoose, { mongo } from "mongoose";
 
 const salesSchema = mongoose.Schema({
-    date: {
-        type: Date,
-        default: Date.now
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+  totelOrders: Number,
+  totelRevenue: Number,
+  bestSellingItems: [
+    {
+      productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+      name: String,
+      quantitySold: Number,
     },
-    totelOrders: Number,
-    totelRevenue: Number,
-    bestSellingItems: {
-        productId: {
-            type: String,
-            ref: 'Product'
-        },
-        name: String,
-        quantitySold: Number
-    }
+  ],
+  paymentMethod: {
+    type: String,
+    required: true,
+  },
 });
 
-const Sales = mongoose.model('Sales', salesSchema);
+const Sales = mongoose.model("Sales", salesSchema);
 export default Sales;

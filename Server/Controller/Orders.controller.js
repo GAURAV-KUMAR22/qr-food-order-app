@@ -53,6 +53,7 @@ export const getTodayOrders = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error });
   }
 };
+
 export const postOrder = async (req, res) => {
   const { items, totalAmount, tax, deliveryCharge, userId, paymentMethod } =
     req.body;
@@ -72,11 +73,9 @@ export const postOrder = async (req, res) => {
 
     // Update the quantities of the products in the inventory
     try {
-      console.log(items);
       if (items.length > 0) {
         // Use Promise.all to handle multiple async operations
         const updatePromises = items.map((item) => {
-          console.log(item.productId);
           return Product.findByIdAndUpdate(
             item.productId,
             { $inc: { quantity: -item.quantity } }, // Decrease quantity
@@ -88,7 +87,6 @@ export const postOrder = async (req, res) => {
         await Promise.all(updatePromises);
       }
     } catch (error) {
-      console.log("Error updating product quantities:", error);
       return res
         .status(500)
         .json({ message: "Error updating product quantities" });
@@ -101,15 +99,13 @@ export const postOrder = async (req, res) => {
       .status(201)
       .json({ message: "Order successfully placed", order: newOrder });
   } catch (error) {
-    console.log("Internal server error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
 export const updateOrder = async (req, res) => {
   const { id } = req.params;
-  const { status, productIds } = req.body;
-
+  const { status, productIds, paymentMethod } = req.body;
   if (!id) {
     return res.status(400).json({ message: "OrderId is not found" });
   }
@@ -127,12 +123,40 @@ export const updateOrder = async (req, res) => {
     }
 
     if (status === "delivered") {
-      // Increment total orders and revenue for "delivered" status
-      const newSale = new Sales({
-        totelOrders: 1, // Correct increment
-        totelRevenue: order.totalAmount, // Correct revenue
-      });
-      await newSale.save();
+      try {
+        const quantityMap = new Map();
+
+        for (const item of productIds) {
+          const key = item.productId._id.toString();
+
+          if (quantityMap.has(key)) {
+            quantityMap.get(key).quantitySold += item.quantity;
+          } else {
+            quantityMap.set(key, {
+              productId: item.productId._id,
+              name: item.productId.name,
+              quantitySold: item.quantity,
+            });
+          }
+        }
+        const bestSellingItems = Array.from(quantityMap.values());
+
+        const productObjectIds = Array.from(
+          new Set(productIds.map((item) => item.productId._id))
+        );
+
+        const newSale = await new Sales({
+          totelOrders: 1,
+          totelRevenue: order.totalAmount,
+          products: productObjectIds,
+          bestSellingItems: bestSellingItems, // now an array
+          paymentMethod: paymentMethod,
+        });
+
+        await newSale.save();
+      } catch (error) {
+        console.error("Error saving sales:", error);
+      }
     }
 
     if (status === "cancelled" && productIds && productIds.length > 0) {
@@ -154,16 +178,13 @@ export const updateOrder = async (req, res) => {
             }
           })
         );
-        console.log("All quantities updated successfully");
       } catch (error) {
-        console.error("Error updating stock:", error);
         return res.status(500).json({ message: "Error updating stock" });
       }
     }
 
     res.status(200).json({ message: "Order updated successfully", order });
   } catch (error) {
-    console.error("Error updating order:", error);
     res.status(500).json({ message: "Internal server error", error });
   }
 };

@@ -17,7 +17,6 @@ export const NewProduct = () => {
   const location = useLocation();
   let product = location?.state?.product;
 
-
   const BackendUrl =
     import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_BACKEND_PROD
@@ -35,9 +34,6 @@ export const NewProduct = () => {
   const validateInput = async () => {
     const formError = {};
 
-    if (!product.imageUrl && !picture) {
-      formError.picture = "Image Field is required";
-    }
     if (!form.name) {
       formError.name = "Name Field is required";
     }
@@ -82,7 +78,6 @@ export const NewProduct = () => {
         });
 
         if (response.status === 200) {
-          console.log(response.data.content);
           setCategoryOption(response.data.content);
         } else {
           throw new Error("Response failed"); // FIXED: now it's a string
@@ -130,7 +125,6 @@ export const NewProduct = () => {
       data.append("category", form.category);
       data.append("price", form.price);
       data.append("quantity", form.quantity);
-      console.log(data);
 
       const responce = product
         ? await PrivateAxios.put(`/products/${product._id}`, data, {
@@ -174,7 +168,6 @@ export const NewProduct = () => {
   function handlePreviewImage() {
     if (picture) {
       const imageUrl = URL.createObjectURL(picture);
-      console.log(imageUrl);
       setShowImage((prev) => !prev);
       setPreview(imageUrl);
     }

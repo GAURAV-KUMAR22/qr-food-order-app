@@ -43,16 +43,12 @@ export const CartPage = () => {
     };
     fetchData();
   }, []);
-  console.log(cartstate);
 
   useEffect(() => {
     cartstate.forEach((cartItem) => {
       const product = fetchedProduct.find((item) => item._id === cartItem._id);
       if (product) {
         if (cartItem.quantity > product.quantity) {
-          console.log(
-            `Available stock: ${product.quantity}, In cart: ${cartItem.quantity}`
-          );
           localStorage.removeItem("cart");
           dispatch(
             updateQuantity({ id: cartItem._id, quantity: product.stock })
@@ -83,9 +79,9 @@ export const CartPage = () => {
   return (
     <>
       {cartstate.length > 0 && (
-        <div className="order-container overflow-x-scroll ">
-          <div className=" mx-auto item-cards flex justify-between ">
-            <div className="w-[100%] h-[58px] my-auto mx-auto items-center flex justify-between">
+        <div className="order-container capitalize ">
+          <div className=" item-cards flex justify-between ">
+            <div className="w-[100%] h-[58px] items-center flex justify-between">
               <ReverseButton route={"/"} routeName={"Home"} />
               <Link
                 to={"/"}
@@ -179,7 +175,7 @@ export const CartPage = () => {
             </div>
             <Link
               to={`/user-info`}
-              className="bg-yellow-300 h-[40px] rounded-sm mx-auto my-0 w-[95%] items-center flex justify-center"
+              className="bg-yellow-300 h-[40px] rounded-sm mx-auto my-0 w-[98%] items-center flex justify-center"
             >
               Place Order
             </Link>

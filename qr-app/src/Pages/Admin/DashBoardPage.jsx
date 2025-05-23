@@ -9,6 +9,7 @@ import { MdAttachMoney } from "react-icons/md";
 import { StatCard } from "../../components/Admin/StatCard";
 import { socket } from "../../Services/Socket";
 import { playNotificationSound } from "../../Util/PlaySound";
+import { CardView } from "../../components/Client/CardView";
 
 export const DashBoardPage = () => {
   const [products, setProducts] = useState([]);
@@ -16,6 +17,7 @@ export const DashBoardPage = () => {
   const [AllSales, setAllSales] = useState([]);
   const [AllCategory, setAllCategory] = useState([]);
   const [todayOrders, setTodayOrders] = useState([]);
+  const [SelingData, setSellingData] = useState([]);
 
   // fetch All Products
   useEffect(() => {
@@ -33,6 +35,40 @@ export const DashBoardPage = () => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchedBestSellingItem = async () => {
+      const response = await PrivateAxios.get("/sales/best-selling-item");
+      if (response.status === 200) {
+        setSellingData(response.data.content);
+      }
+    };
+    fetchedBestSellingItem();
+  }, []);
+
+  const updatedSellingData = SelingData.map((item) => {
+    return {
+      ...item,
+      category: "Best-Selling", // ✅ Adds a new field
+      // or override nested field:
+      categoryId: {
+        ...item.categoryId,
+        name: "Best-Selling", // ✅ Updates the existing nested name
+      },
+    };
+  });
+
+  const grouped = updatedSellingData.reduce((acc, item) => {
+    const category = item.category || "Uncategorized";
+
+    if (!acc[category]) {
+      acc[category] = []; // ✅ Initialize array
+    }
+
+    acc[category].push(item); // ✅ Now safely push the item
+
+    return acc; // ✅ Don't forget to return accumulator
+  }, {});
 
   // Fetch All orders
   useEffect(() => {
@@ -55,15 +91,12 @@ export const DashBoardPage = () => {
         }
       }
     };
-
     fetchOrder();
     socket.emit("join-admin");
-
     const handleOrderUpdate = (data) => {
       playNotificationSound();
       fetchOrder();
     };
-
     socket.on("placed-order", handleOrderUpdate);
 
     return () => {
@@ -154,7 +187,7 @@ export const DashBoardPage = () => {
   }, {});
 
   return (
-    <div className="w-[100%] min-w-[375px] ]  ">
+    <div className="w-[100%] min-w-[375px] relative">
       <div>
         <img
           src="/assets/image1.jpg"
@@ -195,53 +228,32 @@ export const DashBoardPage = () => {
                 <h2 className='flex flex-row text-center bg-green-200 h-9 justify-center items-center'>Graphical Persentation</h2>
             </Link> */}
 
-      {Object.keys(groupedProducts).map((categoryName) => (
-        <div key={categoryName} className="category-section mb-3">
-          <div className="flex justify-between px-4 py-2">
-            <h2 className="text-xl font-semibold">{categoryName}</h2>
-            <Link
-              to={`/admin/${categoryName}`}
-              state={{ items: groupedProducts[categoryName] }}
-              className="text-blue-500"
-            >
-              See More
+      <CardView
+        products={grouped}
+        hideAddToCard={true}
+        cardCss={"h-[250px] my-4"}
+      />
+
+      <CardView
+        products={groupedProducts}
+        hideAddToCard={true}
+        cardCss={"h-[261px]"}
+        css={"category-section mb-4 h-[250px]"}
+      />
+
+      {/* Admin Actions - naturally placed at the bottom of content */}
+      <div className="fixed top-[85%] left-0 right-0  w-[98%] mx-auto mt-0 mb-0 bg-blend-saturation">
+        <div className="min-w-[343px] gap-[8px] lg:w-[99%] overflow-hidden flex flex-col">
+          <div className="w-full bg-[#F9D718] h-[48px] text-center p-1 rounded">
+            <Link to="/admin/createProduct" className="font-semibold">
+              Create New Item
             </Link>
           </div>
-
-          <div
-            className="w-full flex overflow-x-auto  lg:h-[250px] space-x-4 px-4 gap-3"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {groupedProducts[categoryName].map((product) => (
-              <div key={product._id} className="min-w-[150px] flex-shrink-0">
-                <CardDetails
-                  key={product._id}
-                  id={product._id}
-                  category={product.categoryId?.name}
-                  dishName={product.name}
-                  price={product.price || 100}
-                  qty={product.quantity} // Adjusted to use `quantity`
-                  image={product.imageUrl}
-                  product={product}
-                  button={true}
-                  css="h-[220px]"
-                  stock={product.quantity ? product.quantity : 0}
-                  fixedStock={product.totelQuantity ? product.totelQuantity : 0}
-                  data={product}
-                />
-              </div>
-            ))}
+          <div className="w-full h-[48px] text-center p-2 rounded bg-gray-200 mt-1">
+            <Link to="/admin/category" className="font-semibold">
+              Create New Category
+            </Link>
           </div>
-        </div>
-      ))}
-
-      {/* Admin Actions */}
-      <div className="min-w-[343px] h-[112px] gap-[16px] lg:w-[99%] overflow-hidden mb-5 ml-2 mr-2  ">
-        <div className="w-full bg-[#F9D718] h-[48px] text-center p-2">
-          <Link to="/admin/createProduct">Create New Item</Link>
-        </div>
-        <div className="w-full h-[48px] text-center p-2 mb-11">
-          <Link to="/admin/category">Create New Category</Link>
         </div>
       </div>
     </div>

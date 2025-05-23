@@ -4,7 +4,7 @@ import "../Pages/Clients/Home.css";
 
 export const CardItem = ({ name, imgPath }) => {
   const backendUrl =
-    import.meta.env.MODE === "Production"
+    import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_BACKEND_PROD
       : import.meta.env.VITE_BACKEND_DEV;
 
@@ -21,7 +21,7 @@ export const CardItem = ({ name, imgPath }) => {
         />
       </div>
 
-      <p className="text-black text-[13px] font-medium truncate w-full text-center">
+      <p className="text-black text-[13px] font-medium truncate w-full text-center capitalize">
         {name}
       </p>
     </div>

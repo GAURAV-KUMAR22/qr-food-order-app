@@ -13,8 +13,9 @@ import publicAxios from "../../Services/PublicAxios";
 import { socket } from "../../Services/Socket";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { playNotificationSound } from "../../Util/PlaySound";
-// import { socket } from '../../Services/Socket';
+import PrivateAxios from "../../Services/PrivateAxios";
+import { SearchInput } from "../../components/Client/SearchInput";
+import { CardView } from "../../components/Client/CardView";
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -24,6 +25,8 @@ export const Home = () => {
   const [latestOrder, setLatestOrder] = useState([]);
   const [popup, setPopup] = useState(false);
   const [user, setUser] = useState({});
+
+  const [SelingData, setSellingData] = useState([]);
   const navigate = useNavigate();
   // eslint-disable-next-line no-unused-vars
   const [clickCount, setClickCount] = useState(0);
@@ -32,21 +35,9 @@ export const Home = () => {
   const handleAdminAccess = () => {
     setClickCount((prev) => {
       const newCount = prev + 1;
-
       if (newCount === 10) {
-        toast("🦄 Admin Mode Activated", {
-          position: "top-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: false,
-          theme: "colored",
-          transition: Bounce,
-        });
+        toast.success("Admin panel");
         navigate("/signup");
-
         return 0;
       }
 
@@ -54,12 +45,12 @@ export const Home = () => {
     });
   };
 
-<<<<<<< Updated upstream
-=======
+
   // Fetch Best Selling Item
   useEffect(() => {
     const fetchedBestSellingItem = async () => {
       const response = await publicAxios.get("/sales/best-selling-item");
+
       if (response.status === 200) {
         setSellingData(response.data.content);
       }
@@ -88,7 +79,7 @@ export const Home = () => {
     return acc; // ✅ Don't forget to return accumulator
   }, {});
 
->>>>>>> Stashed changes
+
   // Get products
   useEffect(() => {
     const controller = new AbortController();
@@ -133,6 +124,7 @@ export const Home = () => {
     ).values(),
   ];
 
+  // Add to card functionality
   const addToCarts = async (product) => {
     if (product.quantity > 0) {
       toast.success("Product added to cart successfully!");
@@ -162,6 +154,7 @@ export const Home = () => {
     {}
   );
 
+  // Update Order
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const existingUser = storedUser ? JSON.parse(storedUser) : null;
@@ -171,7 +164,6 @@ export const Home = () => {
     async function fetched(userId) {
       try {
         const res = await publicAxios.get(`/orders/${userId}`);
-        console.log(res);
 
         if (res.status !== 200) {
           throw new Error("Response failed");
@@ -190,7 +182,6 @@ export const Home = () => {
           return orderDate >= startOfDay && orderDate <= endOfDay;
         });
 
-        console.log(filteredOrders);
         setLatestOrder(filteredOrders);
       } catch (err) {
         console.error("Error fetching orders:", err);
@@ -215,6 +206,7 @@ export const Home = () => {
     }
   }, []);
 
+  // Logout User after order
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
 
@@ -229,23 +221,30 @@ export const Home = () => {
         setTimeout(() => {
           localStorage.removeItem("user");
           setUser(null);
-          console.log("User removed after 5 minutes.");
         }, delay);
       }
     }
   }, [latestOrder]);
 
+  // Best Selling Item fetched
+  useEffect(() => {
+    const fetchedBestSellingItem = async () => {
+      const response = await publicAxios.get("/sales/best-selling-item");
+      if (response.status === 200) {
+        setSellingData(response.data.content);
+      }
+    };
+    fetchedBestSellingItem();
+  }, []);
+
+  // Show Order Status Button
   function handleShowOrder() {
     setPopup((prev) => !prev);
   }
-
   return (
-<<<<<<< Updated upstream
-    <div className=" max-w-[100%] mx-auto">
-=======
     <div className=" max-w-[100%] mx-auto hide-scrollbar"  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
       {/* Cover Image */}
->>>>>>> Stashed changes
+
       <button onClick={handleAdminAccess} className="w-full ">
         <img
           src="/assets/cover.png"
@@ -254,6 +253,7 @@ export const Home = () => {
         />
       </button>
 
+      {/* Show popup If User Logged In */}
       {user && (
         <div className="fixed right-0 top-5 w-14 h-8 bg-yellow-300 rounded-full object-contain flex justify-center items-center text-center ">
           <button onClick={handleShowOrder} className="">
@@ -273,104 +273,21 @@ export const Home = () => {
         </div>
       )}
 
-      <div className="search-container min-w-[90% ] items-start">
-        <p className="flex justify-start mb-3 pl-1">
-          Choose the best dish for you
-        </p>
-        <div className="flex flex-row items-center gap-2 flex-shrink-0 border border-gray-500 w-[100%] h-[40px] text-start rounded-xl pl-3 ">
-          <img
-            src="/assets/lenspng.svg"
-            alt="lens"
-            className="w-[16px] h-[16px]"
-          />
-          <input
-            type="search"
-            name="search"
-            placeholder="Search"
-            onChange={(e) => setSearch(e.target.value)}
-            className="pr-2 border-none w-[100%] h-[40px] bg-transparent outline-none"
-          ></input>
-        </div>
-      </div>
+      {/* Search Input */}
+      <SearchInput setSearch={setSearch} />
 
-      {search &&
-        Object.keys(filteredGroupedProducts)?.map((categoryName) => (
-          <div key={categoryName} className="category-section mb-3">
-            <div className="flex justify-between px-4 py-2">
-              <h2 className="text-xl font-semibold">{categoryName}</h2>
-              <Link
-                to={`/${categoryName}`}
-                state={{ items: filteredGroupedProducts[categoryName] }}
-                className="text-blue-500"
-              >
-                See More
-              </Link>
-            </div>
+      {/* Category image and name */}
+      <CategoryCard uniqueCategories={uniqueCategories} products={products} />
 
-            <div className="flex overflow-x-auto h-[200px] space-x-4 px-4">
-              {filteredGroupedProducts[categoryName]?.map((product) => (
-                <div key={product._id} className="min-w-[150px] flex-shrink-0">
-                  <CardDetails
-                    id={product._id}
-                    category={product.categoryId?.name}
-                    dishName={product.name}
-                    price={product.price || 100}
-                    qty={product.quantity} // Adjusted to use `quantity`
-                    image={product.imageUrl}
-                    onAddToCart={() => addToCarts(product)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-
-      <div className="">
-        <CategoryCard uniqueCategories={uniqueCategories} products={products} />
-      </div>
+      {/* Search Items */}
+      {search && <CardView products={filteredGroupedProducts} />}
 
       <div className="mb-12">
-<<<<<<< Updated upstream
-        {Object.keys(groupedProducts).map((categoryName) => (
-          <div key={categoryName} className="category-section mb-2">
-            <div className="flex justify-between px-4 py-2">
-              <h2 className="text-[14px] font-semibold">{categoryName}</h2>
-              <Link
-                to={`/${categoryName}`}
-                state={{ items: groupedProducts[categoryName] }}
-                className="text-blue-500"
-              >
-                See More
-              </Link>
-            </div>
 
-            <div
-              className="flex overflow-x-auto min-h-[200px]  space-x-4 px-4 scrollbar-hide"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-            >
-              {groupedProducts[categoryName]?.map((product) => (
-                <div key={product._id} className="min-w-[150px] flex-shrink-0">
-                  <CardDetails
-                    key={product._id}
-                    id={product._id}
-                    category={product.categoryId?.name}
-                    dishName={product.name}
-                    price={product.price || 100}
-                    qty={product.quantity} // Adjusted to use `quantity`
-                    image={product.imageUrl}
-                    onAddToCart={() => addToCarts(product)}
-                    product={product}
-                    stock={product.quantity ? product.quantity : 0}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-=======
+     
         <CardView products={grouped} addToCarts={addToCarts} css={"h-240px"} />
         <CardView products={groupedProducts} addToCarts={addToCarts} />
->>>>>>> Stashed changes
+
 
         <div className="fixed bottom-1 left-0 right-0 mx-auto bg-yellow-300 w-[97%] h-[48px] flex justify-center items-center">
           <Link

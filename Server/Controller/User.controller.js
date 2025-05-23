@@ -52,12 +52,9 @@ export const putUser = async (req, res) => {
     return res.status(400).json({ message: "Phone number must be 10 digits" });
   }
 
-  console.log(name, phone, table);
-
   try {
     // Find the existing user by phone
     const existingUser = await User.findOne({ phone });
-    console.log(existingUser);
 
     if (!existingUser) {
       return res.status(400).json({ message: "User not found" });
@@ -145,10 +142,11 @@ export const LoginUser = async (req, res) => {
     };
     const token = jwt.sign(payload, process.env.JWTSECRET);
     res.cookie("token", token, {
-      httpOnly: false,
-      secure: false,
-      sameSite: "Strict",
-      maxAge: 24 * 60 * 60 * 1000, // 1 day in ms
+      httpOnly: true,
+      secure: true, // ✅ required on HTTPS
+      sameSite: "None", // ✅ required for cross-site cookie
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+
     });
 
     res
@@ -215,7 +213,6 @@ export const profileUser = async (req, res) => {
 export const getChechAuthentication = async (req, res) => {
   const loginUser = req.user;
   try {
-    console.log(loginUser);
     const loginUserVerify = await Admin.findById(loginUser._id);
     if (!loginUserVerify) {
       return res.status(400).json({

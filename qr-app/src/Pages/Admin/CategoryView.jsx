@@ -12,7 +12,6 @@ export const CategoryView = () => {
   const categoryAdmin = location.pathname.replace(/^\/+/, "");
   const category = categoryAdmin.replace("admin/", "");
 
-  console.log(location.state.items);
   useEffect(() => {
     const rawItems = location.state?.items;
     const items = Array.isArray(rawItems) ? rawItems : [rawItems];
@@ -30,13 +29,9 @@ export const CategoryView = () => {
     setItems(filteredItems);
   }, [location]);
 
-  console.log(itemArray);
-
   function handleAddToCart(product) {
     dispatch(addToCartAction(product));
   }
-  console.log(itemArray);
-
   return (
     <div className="burger-container p-1">
       <div className="my-2 ml-2 ">

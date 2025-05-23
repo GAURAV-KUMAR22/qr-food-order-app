@@ -20,7 +20,6 @@ export const Category = () => {
     const categoryFromPath = decodeURIComponent(
       location.pathname.replace("/", "").toLowerCase()
     );
-    console.log(categoryFromPath);
     const filteredItems = items.filter(
       (item) =>
         item?.categoryId?.name?.trim().toLowerCase() === categoryFromPath

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PrivateAxios from "../../Services/PrivateAxios";
+import { MdAttachFile } from "react-icons/md";
 import { Model } from "../../components/Model";
 
 export const NewCategory = () => {
@@ -41,10 +42,8 @@ export const NewCategory = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log(responce);
       if (responce.status === 201) {
         setCategory(responce.data.content);
-        toast.success("Category Added succussfully");
         naviagate("/admin");
       }
     } catch (error) {

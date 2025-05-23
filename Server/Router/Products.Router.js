@@ -8,6 +8,7 @@ import {
   getProduct,
   postCategory,
   postNewProduct,
+  postRating,
   putProduct,
 } from "../Controller/Products.controller.js";
 import ProtectedRoute from "../Service/ProtectedRoute.js";
@@ -28,6 +29,9 @@ route.post(
 );
 route.get("/category", getAllCategory);
 route.get("/:category", getCategory);
+
+route.post("/rating", postRating);
+// route.get("/rating", getRating);
 
 route.get("/:productId", getProduct);
 route.delete("/:productId", deleteProduct);

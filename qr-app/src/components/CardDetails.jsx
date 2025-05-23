@@ -2,6 +2,8 @@ import React, { useRef, useState } from "react";
 import "../Pages/Clients/Home.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthProvider";
+import StarIcons from "react-rating-stars-component";
+import publicAxios from "../Services/PublicAxios";
 
 export const CardDetails = ({
   dishName,
@@ -16,86 +18,115 @@ export const CardDetails = ({
   stock,
   fixedStock,
   data,
+  ratingValue,
 }) => {
   const backendUrl =
     import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_BACKEND_PROD
       : import.meta.env.VITE_BACKEND_DEV;
+
   const [selected, setSelected] = useState(false);
   const timerRef = useRef(null);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  const totelStock = fixedStock ? fixedStock : 0;
-  let stockTag;
+  const totalStock = fixedStock || 0;
+  const availableStock = stock ?? 0;
 
-  if (stock === 0) {
+  let stockTag;
+  if (availableStock === 0) {
     stockTag = "OutOfStock";
-  } else if (stock <= (totelStock / 100) * 10) {
-    console.log("stock", stock);
+  } else if (availableStock <= (totalStock / 100) * 10) {
     stockTag = "lowStock";
   } else {
     stockTag = "InStock";
   }
-  console.log(stock);
+
+  async function ratingChanged(newRating) {
+    try {
+      const userId = JSON.parse(localStorage.getItem("user"));
+      const response = await publicAxios.post("/products/rating", {
+        productId: id,
+        userId: userId._id,
+        rating: newRating,
+      });
+      // Optionally show toast or success
+    } catch (error) {
+      console.error("Rating failed:", error);
+      // Optionally show error toast
+    }
+  }
+
   return (
     <div
-<<<<<<< Updated upstream
       className={`flex flex-col justify-end shadow-md hover:scale-105 ${css} my-0 sm:w-[190px]`}
       style={{
         scrollbarWidth: "none",
         msOverflowStyle: "none",
       }}
-=======
-      className={`flex flex-col justify-end shadow-md hover:scale-102 ${css}  my-0 sm:w-[190px] transition-transform duration-200`}
->>>>>>> Stashed changes
+
+      className={`flex flex-col justify-end shadow-md hover:scale-102 ${css} h-[260px] my-0 sm:w-[190px] transition-transform duration-200`}
+
     >
-      {/* Stock tag aligned top-right using flex */}
-      {isAuthenticated && stock >= 0 && (
+      {/* Stock badge */}
+      {isAuthenticated && (
         <div className="flex justify-end w-full px-1 mt-0.5 pt-2">
           <div
-            className={`px-2 py-1.5 text-xs font-medium rounded-xl
-              ${
-                stockTag === "OutOfStock"
-                  ? "bg-[#DC3545]"
-                  : stockTag === "lowStock"
-                  ? "bg-[#FFA500]"
-                  : "bg-[#1DB954] text-white"
-              }`}
+            className={`px-2 py-1.5 text-xs font-medium rounded-xl text-white ${
+              stockTag === "OutOfStock"
+                ? "bg-[#DC3545]"
+                : stockTag === "lowStock"
+                ? "bg-[#FFA500]"
+                : "bg-[#1DB954]"
+            }`}
           >
-            {stockTag}
-            <span className="font-medium"> ({stock})</span>
+            {stockTag} <span className="font-medium">({availableStock})</span>
           </div>
         </div>
       )}
 
-      {/* Content wrapper */}
-      <div className="flex flex-col items-center justify-center pt-2 px-2 pb-2">
+      {/* Card content */}
+      <div className="flex flex-col items-center justify-center pt-2 px-2 pb-1">
         <img
           src={`${backendUrl}/${image}`}
-          alt="food"
+          alt={dishName}
           className="w-[80px] h-[80px] object-cover rounded-full"
         />
-        <h3 className="text-sm font-medium tracking-tighter mt-2 text-center">
-          {dishName}
-        </h3>
-        <p className="font-bold text-xs mt-1 text-center">Rs. {price}/-</p>
+        <Link to={`/product/${id}`} state={{ product }}>
+          <h3 className="text-sm font-medium tracking-tighter mt-2 text-center capitalize">
+            {dishName}
+          </h3>
+          <p className="font-bold text-xs mt-1 text-center capitalize">
+            Rs. {price}/-
+          </p>
+        </Link>
+        <StarIcons
+          count={5}
+          onChange={ratingChanged}
+          size={20}
+          isHalf={true}
+          emptyIcon={<i className="far fa-star"></i>}
+          halfIcon={<i className="fa fa-star-half-alt"></i>}
+          fullIcon={<i className="fa fa-star"></i>}
+          activeColor="#ffd700"
+          value={ratingValue}
+        />
       </div>
 
-      {/* Buttons */}
+      {/* Button section */}
       {!button && (
         <button
           className={`${
-            stock === 0 ? "pointer-events-none opacity-50" : ""
-          } w-[85%] font-semibold bg-yellow-300 mb-2 rounded-sm h-[35px] justify-center mx-auto mt-1`}
-          onClick={() => onAddToCart(category, id, price)}
+            availableStock === 0 ? "pointer-events-none opacity-50" : ""
+          } w-[85%] font-semibold bg-yellow-300 mb-2 rounded-sm h-[35px] mx-auto mt-1`}
+          onClick={() => onAddToCart(product)}
         >
           Add to cart
         </button>
       )}
       {button && (
         <Link
-          className="border w-[85%] mb-2 flex font-semibold rounded-sm h-[35px] justify-center mx-auto mt-1"
+          className="border w-[85%] mb-2 flex font-semibold rounded-sm h-[35px] justify-center items-center mx-auto mt-1"
           to={"/admin/createProduct"}
           state={{ product: data }}
         >
