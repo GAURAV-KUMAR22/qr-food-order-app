@@ -1,4 +1,6 @@
 import express from "express";
+import dotenv from "dotenv";
+dotenv.config();
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import db from "./Db/MongoDb.js";
@@ -7,7 +9,6 @@ import ProductsRoute from "./Router/Products.Router.js";
 import CartRoutes from "./Router/Cart.router.js";
 import OrderRoutes from "./Router/Order.route.js";
 import SalesRouter from "./Router/Sales.router.js";
-import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import path from "path";
 import "./Services/Cron/Resetqty.js";
@@ -18,7 +19,11 @@ import helmet from "helmet";
 import compression from "compression";
 import ProtectedRoute from "./Service/ProtectedRoute.js";
 import "./Services/Cron/Resetqty.js";
+<<<<<<< Updated upstream
 dotenv.config();
+=======
+import "./Services/Cron/Resetqty.js";
+>>>>>>> Stashed changes
 const __Filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__Filename);
 
@@ -43,23 +48,18 @@ function shouldCompress(req, res) {
 
 app.use(
   cors({
-    origin:
-      process.env.MODE === "Production"
-        ? process.env.FRONTEND_PROD
-        : process.env.FRONTEND_DEV,
+    origin: process.env.MODE === 'Production' ? process.env.FRONTEND_PROD : process.env.FRONTEND_DEV,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
 );
 
 const server = createServer(app);
-
+console.log("MODE:", process.env.MODE);
+console.log("url:", process.env.MODE === 'Production' ? process.env.FRONTEND_PROD : process.env.FRONTEND_DEV);
 const io = new Server(server, {
   cors: {
-    origin:
-      process.env.MODE === "Production"
-        ? process.env.FRONTEND_PROD
-        : process.env.FRONTEND_DEV,
+    origin: process.env.MODE === 'Production' ? process.env.FRONTEND_PROD : process.env.FRONTEND_DEV,
     methods: ["GET", "POST"],
     credentials: true,
   },

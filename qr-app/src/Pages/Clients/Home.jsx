@@ -54,6 +54,41 @@ export const Home = () => {
     });
   };
 
+<<<<<<< Updated upstream
+=======
+  // Fetch Best Selling Item
+  useEffect(() => {
+    const fetchedBestSellingItem = async () => {
+      const response = await publicAxios.get("/sales/best-selling-item");
+      if (response.status === 200) {
+        setSellingData(response.data.content);
+      }
+    };
+    fetchedBestSellingItem();
+  }, []);
+
+  // Best Selling Item Logic
+  const updatedSellingData = SelingData.map((item) => {
+    return {
+      ...item,
+      category: "Best-Selling", // ✅ Adds a new field
+      // or override nested field:
+      categoryId: {
+        ...item.categoryId,
+        name: "Best-Selling", // ✅ Updates the existing nested name
+      },
+    };
+  });
+  let grouped = updatedSellingData.reduce((acc, item) => {
+    const category = item.category || "Uncategorized";
+    if (!acc[category]) {
+      acc[category] = []; // ✅ Initialize array
+    }
+    acc[category].push(item); // ✅ Now safely push the item
+    return acc; // ✅ Don't forget to return accumulator
+  }, {});
+
+>>>>>>> Stashed changes
   // Get products
   useEffect(() => {
     const controller = new AbortController();
@@ -205,7 +240,12 @@ export const Home = () => {
   }
 
   return (
+<<<<<<< Updated upstream
     <div className=" max-w-[100%] mx-auto">
+=======
+    <div className=" max-w-[100%] mx-auto hide-scrollbar"  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      {/* Cover Image */}
+>>>>>>> Stashed changes
       <button onClick={handleAdminAccess} className="w-full ">
         <img
           src="/assets/cover.png"
@@ -290,6 +330,7 @@ export const Home = () => {
       </div>
 
       <div className="mb-12">
+<<<<<<< Updated upstream
         {Object.keys(groupedProducts).map((categoryName) => (
           <div key={categoryName} className="category-section mb-2">
             <div className="flex justify-between px-4 py-2">
@@ -326,6 +367,10 @@ export const Home = () => {
             </div>
           </div>
         ))}
+=======
+        <CardView products={grouped} addToCarts={addToCarts} css={"h-240px"} />
+        <CardView products={groupedProducts} addToCarts={addToCarts} />
+>>>>>>> Stashed changes
 
         <div className="fixed bottom-1 left-0 right-0 mx-auto bg-yellow-300 w-[97%] h-[48px] flex justify-center items-center">
           <Link
