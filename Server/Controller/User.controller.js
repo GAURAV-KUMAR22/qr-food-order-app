@@ -146,6 +146,7 @@ export const LoginUser = async (req, res) => {
       secure: true, // ✅ required on HTTPS
       sameSite: "None", // ✅ required for cross-site cookie
       maxAge: 24 * 60 * 60 * 1000, // 1 day
+
     });
 
     res
