@@ -12,7 +12,7 @@ import ProtectedRoute from "../Service/ProtectedRoute.js";
 const route = express.Router();
 
 route.get("/orders", ProtectedRoute, getAllOrders);
-route.get("/active-orders", activeOrders);
+route.get("/active-orders", ProtectedRoute, activeOrders);
 route.get("/today-orders", getTodayOrders);
 route.post("/place-order", postOrder);
 route.patch("/:id", updateOrder);
