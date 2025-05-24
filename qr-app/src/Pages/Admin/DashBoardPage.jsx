@@ -89,7 +89,7 @@ export const DashBoardPage = () => {
     const controller = new AbortController();
     const fetchSales = async () => {
       try {
-        const response = await PrivateAxios.get("/sales", {
+        const response = await publicAxios.get("/sales", {
           signal: controller.signal,
         });
         setAllSales(response.data.content);
@@ -120,7 +120,7 @@ export const DashBoardPage = () => {
   useEffect(() => {
     const fetchTodayOrders = async () => {
       try {
-        const response = await PrivateAxios.get("/orders/today-orders");
+        const response = await publicAxios.get("/orders/today-orders");
         setTodayOrders(response.data.content);
       } catch (error) {
         console.error("Error fetching today's orders:", error);

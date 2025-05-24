@@ -12,9 +12,6 @@ const PrivateAxios = axios.create({
   withCredentials: true, // ✅ Required for sending cookies with requests
 });
 
-// ✅ No need to manually add Authorization header for cookies
-// Remove request interceptor
-
 PrivateAxios.interceptors.response.use(
   (response) => response,
   (error) => {
