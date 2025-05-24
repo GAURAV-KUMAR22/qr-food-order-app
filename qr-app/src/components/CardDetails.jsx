@@ -13,7 +13,7 @@ export const CardDetails = ({
   onAddToCart,
   image,
   product,
-  css,
+  CardCss,
   button,
   stock,
   fixedStock,
@@ -50,23 +50,18 @@ export const CardDetails = ({
         userId: userId._id,
         rating: newRating,
       });
-      // Optionally show toast or success
     } catch (error) {
       console.error("Rating failed:", error);
-      // Optionally show error toast
     }
   }
 
   return (
     <div
-      className={`flex flex-col justify-end shadow-md hover:scale-105 ${css} my-0 sm:w-[190px]`}
+      className={`flex flex-col justify-end shadow-md hover:scale-101 ${CardCss} my-0 sm:w-[190px] overflow-hidden hover:overflow-y-hidden`}
       style={{
         scrollbarWidth: "none",
         msOverflowStyle: "none",
       }}
-
-      className={`flex flex-col justify-end shadow-md hover:scale-102 ${css} h-[260px] my-0 sm:w-[190px] transition-transform duration-200`}
-
     >
       {/* Stock badge */}
       {isAuthenticated && (

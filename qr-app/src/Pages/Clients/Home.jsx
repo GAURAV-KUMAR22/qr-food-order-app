@@ -45,7 +45,6 @@ export const Home = () => {
     });
   };
 
-
   // Fetch Best Selling Item
   useEffect(() => {
     const fetchedBestSellingItem = async () => {
@@ -78,7 +77,6 @@ export const Home = () => {
     acc[category].push(item); // ✅ Now safely push the item
     return acc; // ✅ Don't forget to return accumulator
   }, {});
-
 
   // Get products
   useEffect(() => {
@@ -242,7 +240,10 @@ export const Home = () => {
     setPopup((prev) => !prev);
   }
   return (
-    <div className=" max-w-[100%] mx-auto hide-scrollbar"  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+    <div
+      className=" max-w-[100%] mx-auto hide-scrollbar"
+      style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+    >
       {/* Cover Image */}
 
       <button onClick={handleAdminAccess} className="w-full ">
@@ -282,32 +283,38 @@ export const Home = () => {
       {/* Search Items */}
       {search && <CardView products={filteredGroupedProducts} />}
 
-      <div className="mb-12">
+      <div className="mb-14">
+        <CardView
+          products={grouped}
+          addToCarts={addToCarts}
+          cardCss={"h-[220px]"}
+          css={"h-auto"}
+        />
+        <CardView
+          products={groupedProducts}
+          addToCarts={addToCarts}
+          cardCss={"h-[220px]"}
+        />
+      </div>
 
-     
-        <CardView products={grouped} addToCarts={addToCarts} css={"h-240px"} />
-        <CardView products={groupedProducts} addToCarts={addToCarts} />
-
-
-        <div className="fixed bottom-1 left-0 right-0 mx-auto bg-yellow-300 w-[97%] h-[48px] flex justify-center items-center">
-          <Link
-            className="flex items-center justify-center text-center gap-1"
-            to={"/cart"}
-            state={{ cartItems }}
-          >
-            <span>
-              <img
-                src="/assets/cart.svg"
-                alt="cart"
-                className="w-[18px] h-[18px] font-semibold"
-              />
-            </span>
-            Cart
-            <span className="font-semibold ml-1 text-center flex justify-center">
-              {totalQty}
-            </span>
-          </Link>
-        </div>
+      <div className="fixed bottom-1 left-0 right-0 mx-auto bg-yellow-300 w-[98%] h-[48px] flex justify-center items-center mt-20">
+        <Link
+          className="flex items-center justify-center text-center gap-1"
+          to={"/cart"}
+          state={{ cartItems }}
+        >
+          <span>
+            <img
+              src="/assets/cart.svg"
+              alt="cart"
+              className="w-[18px] h-[18px] font-semibold"
+            />
+          </span>
+          Cart
+          <span className="font-semibold ml-1 text-center flex justify-center">
+            {totalQty}
+          </span>
+        </Link>
       </div>
     </div>
   );

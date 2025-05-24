@@ -75,12 +75,12 @@ export const PaymentPage = () => {
   };
 
   return (
-    <div className="mx-2">
+    <div className="">
       {/* Back to user details link */}
       <div className="my-2">
         <ReverseButton
           route={`/user-info?userId=${userId}`}
-          routeName={"User Details"}
+          routeName={"Payment Method"}
         />
       </div>
 
@@ -119,7 +119,7 @@ export const PaymentPage = () => {
             </div>
           </div>
 
-          <div className="flex fixed bottom-1 w-[95%] gap-1 h-12 px-2">
+          <div className="flex fixed bottom-1 left-0 right-0 w-[98%] mx-auto gap-1 h-12">
             <Link
               to={`/user-info?userId=${userId}`}
               className="w-[50%] flex items-center justify-center bg-gray-200 rounded"

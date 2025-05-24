@@ -46,7 +46,10 @@ function shouldCompress(req, res) {
 
 app.use(
   cors({
-    origin: process.env.MODE === 'Production' ? process.env.FRONTEND_PROD : process.env.FRONTEND_DEV,
+    origin:
+      process.env.MODE === "Production"
+        ? process.env.FRONTEND_PROD
+        : process.env.FRONTEND_DEV,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
@@ -54,10 +57,18 @@ app.use(
 
 const server = createServer(app);
 console.log("MODE:", process.env.MODE);
-console.log("url:", process.env.MODE === 'Production' ? process.env.FRONTEND_PROD : process.env.FRONTEND_DEV);
+console.log(
+  "url:",
+  process.env.MODE === "Production"
+    ? process.env.FRONTEND_PROD
+    : process.env.FRONTEND_DEV
+);
 const io = new Server(server, {
   cors: {
-    origin: process.env.MODE === 'Production' ? process.env.FRONTEND_PROD : process.env.FRONTEND_DEV,
+    origin:
+      process.env.MODE === "Production"
+        ? process.env.FRONTEND_PROD
+        : process.env.FRONTEND_DEV,
     methods: ["GET", "POST"],
     credentials: true,
   },

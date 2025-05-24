@@ -21,17 +21,17 @@ export const PaymentsMethod = () => {
 
   return (
     <div className="payment-method">
-      <div className="w-[98%] mx-auto mt-1.5">
+      <div className="">
         <ReverseButton
           route={`/user-info?userId=${userId}`}
-          routeName={"User-Details"}
+          routeName={"Order Details"}
         />
       </div>
       <div className="amount">
         <p>Totel Amount</p>
         <b>Rs.{totalPrice}</b>/<p>Hundred Rupees</p>
       </div>
-      <div className="order-details">
+      <div className="order-details  mx-auto">
         <table className="styled-table">
           <thead>
             <tr>
@@ -78,7 +78,7 @@ export const PaymentsMethod = () => {
       </div>
       <Link
         to={`/payment?userId=${userId}`}
-        className="flex items-center justify-center bg-yellow-300 my-0 mx-auto  h-[40px] w-[95%]"
+        className="flex items-center justify-center bg-yellow-300 my-0 mx-auto  h-[40px] w-[98%]"
       >
         Pay
       </Link>

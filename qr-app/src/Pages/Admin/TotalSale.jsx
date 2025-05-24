@@ -60,7 +60,7 @@ export const TotalSale = () => {
 
   return (
     <div className="relative">
-      <div className="flex m-1 text-xl mb-4 ">
+      <div className="flex m-1 text-m mb-4 ">
         <Link to="/admin" className="flex flex-row items-center">
           <IoIosArrowBack />
           <span className="ml-1">Admin</span>
