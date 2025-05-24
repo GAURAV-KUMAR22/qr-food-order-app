@@ -3,9 +3,10 @@ import {
   getAllSales,
   getBestSellingItem,
 } from "../Controller/Sales.Controller.js";
+import ProtectedRoute from "../Service/ProtectedRoute.js";
 const router = express.Router();
 
-router.get("/", getAllSales);
+router.get("/", ProtectedRoute, getAllSales);
 router.get("/best-selling-item", getBestSellingItem);
 
 export default router;

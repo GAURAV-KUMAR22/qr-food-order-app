@@ -13,7 +13,7 @@ const route = express.Router();
 
 route.get("/orders", ProtectedRoute, getAllOrders);
 route.get("/active-orders", ProtectedRoute, activeOrders);
-route.get("/today-orders", getTodayOrders);
+route.get("/today-orders", ProtectedRoute, getTodayOrders);
 route.post("/place-order", postOrder);
 route.patch("/:id", updateOrder);
 route.get("/:id", getOrder);
