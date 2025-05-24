@@ -45,6 +45,7 @@ export const CardView = ({
                   data={product}
                   onAddToCart={addToCarts}
                   ratingValue={product.averageRating ?? 0}
+                  button={hideAddToCard}
                 />
               </div>
             ))}

@@ -190,13 +190,13 @@ export const DashBoardPage = () => {
 
       <CardView
         products={grouped}
-        hideAddToCard
+        hideAddToCard={true}
         cardCss="h-[250px]"
         css=" h-auto"
       />
       <CardView
         products={groupedProducts}
-        hideAddToCard
+        hideAddToCard={true}
         cardCss="h-[261px]"
         css=" h-auto"
       />
