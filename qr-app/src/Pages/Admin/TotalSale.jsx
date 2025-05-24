@@ -5,6 +5,7 @@ import publicAxios from "../../Services/PublicAxios";
 import PrivateAxios from "../../Services/PrivateAxios";
 import { SalesFilter } from "../../components/Admin/SalesFilter";
 import { FcEmptyFilter } from "react-icons/fc";
+import { ReverseButton } from "../../components/Client/ReverseButton";
 
 export const TotalSale = () => {
   const [salesData, setSaledData] = useState([]);
@@ -61,10 +62,7 @@ export const TotalSale = () => {
   return (
     <div className="relative">
       <div className="flex m-1 text-m mb-4 ">
-        <Link to="/admin" className="flex flex-row items-center">
-          <IoIosArrowBack />
-          <span className="ml-1">Admin</span>
-        </Link>
+        <ReverseButton route={"/admin"} routeName={"Sale"} />
       </div>
 
       <div className="absolute right-3 top-2.5 w-[80px] h-[30px] text-center items-center justify-center border rounded-md">

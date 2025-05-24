@@ -1,6 +1,7 @@
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import React, { useEffect, useRef, useState } from "react";
 import { auth } from "../../firebase";
+import toast from "react-hot-toast";
 
 export const PhoneVerify = ({ phone, setPhone, code, setCode, onVerified }) => {
   const [confirmationResult, setConfirmationResult] = useState(null);
@@ -18,7 +19,7 @@ export const PhoneVerify = ({ phone, setPhone, code, setCode, onVerified }) => {
             // reCAPTCHA solved - maybe auto-send OTP
           },
           "expired-callback": () => {
-            alert("reCAPTCHA expired. Please refresh and try again.");
+            toast.error("reCAPTCHA expired. Please refresh and try again.");
             window.recaptchaVerifier.clear();
             delete window.recaptchaVerifier;
           },
@@ -34,7 +35,8 @@ export const PhoneVerify = ({ phone, setPhone, code, setCode, onVerified }) => {
   const sendOTP = async (e) => {
     e.preventDefault();
 
-    if (!phone.startsWith("+")) return alert("Include country code e.g. +91");
+    if (!phone.startsWith("+"))
+      return toast.error("Include country code e.g. +91");
 
     try {
       const result = await signInWithPhoneNumber(
@@ -43,10 +45,10 @@ export const PhoneVerify = ({ phone, setPhone, code, setCode, onVerified }) => {
         window.recaptchaVerifier
       );
       setConfirmationResult(result);
-      alert("OTP sent successfully!");
+      toast.success("OTP sent successfully!");
     } catch (error) {
       console.error("Error sending OTP:", error);
-      alert("Failed to send OTP: " + error.message);
+      toast.error("Failed to send OTP: " + error.message);
       // Optional: Reset captcha
       if (window.recaptchaVerifier) {
         window.recaptchaVerifier.clear();
@@ -57,16 +59,16 @@ export const PhoneVerify = ({ phone, setPhone, code, setCode, onVerified }) => {
 
   // Verify OTP
   const verifyOTP = async () => {
-    if (!confirmationResult) return alert("Please request OTP first.");
-    if (!code) return alert("Enter the OTP.");
+    if (!confirmationResult) return toast.error("Please request OTP first.");
+    if (!code) return toast.error("Enter the OTP.");
 
     try {
       await confirmationResult.confirm(code);
-      alert("Phone number verified!");
+      toast.success("Phone number verified!");
       onVerified();
     } catch (error) {
       console.error("OTP verification failed:", error);
-      alert("Invalid OTP. Try again.");
+      toast.error("Invalid OTP. Try again.");
     }
   };
 

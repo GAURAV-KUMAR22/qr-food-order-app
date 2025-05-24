@@ -33,8 +33,8 @@ export const CategoryView = () => {
     dispatch(addToCartAction(product));
   }
   return (
-    <div className="burger-container p-1">
-      <div className="my-2 ml-2 ">
+    <div className="burger-container">
+      <div className=" ">
         <ReverseButton route={"/admin"} routeName={category} />
       </div>
       <div className=" grid grid-cols-2 sm:flex sm:flex-wrap sm:gap-4 mt-7">
@@ -48,7 +48,7 @@ export const CategoryView = () => {
             image={product.imageUrl}
             onAddToCart={() => handleAddToCart(product)}
             product={product}
-            button={true}
+            button={false}
           />
         ))}
       </div>

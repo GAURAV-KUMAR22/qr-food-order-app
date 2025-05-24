@@ -7,11 +7,11 @@ export const TodayOrderStat = () => {
   const items = location.state.items;
 
   return (
-    <div className="w-[98%] flex flex-col mx-auto">
-      <div className="w-[98%] flex flex-col mx-auto mt-1.5">
+    <div>
+      <div className="mb-4">
         <ReverseButton route={"/admin"} routeName={"Admin"} />
       </div>
-      <div className="p-4">
+      <div className="w-[98%] flex flex-col mx-auto">
         <h1 className="text-2xl font-bold mb-6">Today's Orders</h1>
 
         {Object.entries(items).map(([status, orders]) => (

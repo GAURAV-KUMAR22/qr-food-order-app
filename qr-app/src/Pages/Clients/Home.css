@@ -211,17 +211,6 @@
   letter-spacing: -1%;
 }
 
-.left p {
-  margin-top: 8px;
-  width: 150px;
-  height: 39px;
-  font-family: Inter;
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 19.2px;
-  letter-spacing: 0%;
-}
-
 .right {
   width: 102px;
   height: 130px;

@@ -79,10 +79,10 @@ export const CartPage = () => {
   return (
     <>
       {cartstate.length > 0 && (
-        <div className="order-container capitalize ">
-          <div className=" item-cards flex justify-between ">
+        <div className="capitalize ">
+          <div className=" flex justify-between ">
             <div className="w-[100%] h-[58px] items-center flex justify-between">
-              <ReverseButton route={"/"} routeName={"Home"} />
+              <ReverseButton route={"/"} routeName={"Add to cart"} />
               <Link
                 to={"/"}
                 className="sticky right-6 top-4 flex flex-row items-center justify-end "
@@ -93,7 +93,7 @@ export const CartPage = () => {
             </div>
           </div>
 
-          <div className=" mt-2 m-2 overflow-y-scroll">
+          <div className=" mt-2 m-2 overflow-y-scroll relative">
             {Array.isArray(cartstate) &&
               cartstate.map(
                 (item) =>
@@ -102,11 +102,11 @@ export const CartPage = () => {
                       key={item._id}
                       className="flex justify-between items-center rounded-xl shadow mb-4 p-1"
                     >
-                      <div className="left text-xl space-y-1">
-                        <h4 className=" inline text-base font-semibold">
+                      <div className="font-bold text-xl space-y-1">
+                        <h4 className="inline text-base font-semibold">
                           {item.name}
                         </h4>
-                        <p className="text-sm text-gray-600 mb-4">
+                        <p className="text-sm font-semibold text-gray-600 mb-4">
                           {item.description}
                         </p>
                         <b className="text-black mt-[20px] font-bold">
@@ -154,7 +154,7 @@ export const CartPage = () => {
               )}
           </div>
 
-          <div className="sticky bottom-0 left-0 right-0 mx-auto my-auto">
+          <div className="relative bottom-0 left-0 right-0 mx-auto my-auto">
             <div className="order-calc">
               <div>
                 <p>SubTotel</p>

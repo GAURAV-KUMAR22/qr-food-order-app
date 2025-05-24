@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import { CardDetails } from "../../components/CardDetails";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addToCart as addToCartAction } from "../../Redux/Cart/index.js";
+import {
+  addToCart,
+  addToCart as addToCartAction,
+} from "../../Redux/Cart/index.js";
 import { ReverseButton } from "../../components/Client/ReverseButton.jsx";
+import toast from "react-hot-toast";
 
 export const Category = () => {
   const location = useLocation();
@@ -29,7 +33,10 @@ export const Category = () => {
   }, [location]);
 
   function handleAddToCart(product) {
-    dispatch(addToCartAction(product));
+    if (product.quantity > 0) {
+      toast.success("Product added to cart successfully!");
+      dispatch(addToCart(product));
+    }
   }
 
   return (
@@ -42,14 +49,16 @@ export const Category = () => {
           <CardDetails
             key={product._id}
             id={product._id}
+            category={product.categoryId?.name}
             dishName={product.name}
-            description={product.description}
             price={product.price}
             image={product.imageUrl}
-            onAddToCart={() => handleAddToCart(product)}
             product={product}
-            c
-            css={""}
+            stock={product.quantity ?? 0}
+            fixedStock={product.totelQuantity ?? 0}
+            data={product}
+            onAddToCart={() => handleAddToCart(product)}
+            ratingValue={product.averageRating ?? 0}
           />
         ))}
       </div>

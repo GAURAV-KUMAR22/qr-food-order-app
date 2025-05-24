@@ -101,9 +101,9 @@ export const UserInfo = () => {
   }
 
   return (
-    <div className="mx-3">
+    <div className="mx-2">
       <div className="w-[100%] h-[58px] flex items-center">
-        <ReverseButton route={"/cart"} routeName={"Cart"} />
+        <ReverseButton route={"/cart"} routeName={"User Details"} />
       </div>
 
       <div className="relative flex flex-col">
