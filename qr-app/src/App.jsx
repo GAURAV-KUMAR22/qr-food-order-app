@@ -57,7 +57,7 @@ function App() {
   }, []);
 
   return (
-    <>
+    <div>
       <QrCode
         value="https://food-order-app-1-jddi.onrender.com/"
         className="hidden"
@@ -119,7 +119,7 @@ function App() {
         </Routes>
       </Suspense>
       <Toaster />
-    </>
+    </div>
   );
 }
 

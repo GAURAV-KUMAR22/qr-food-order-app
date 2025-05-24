@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PrivateAxios from "../../Services/PrivateAxios";
-import { CardDetails } from "../../components/CardDetails";
 import publicAxios from "../../Services/PublicAxios";
+import { socket } from "../../Services/Socket";
+import { playNotificationSound } from "../../Util/PlaySound";
+
+import { CardDetails } from "../../components/CardDetails";
+import { StatCard } from "../../components/Admin/StatCard";
+import { CardView } from "../../components/Client/CardView";
+
 import { BsBoxArrowInDownLeft, BsBoxArrowInUp } from "react-icons/bs";
 import { TbCategoryPlus } from "react-icons/tb";
 import { MdAttachMoney } from "react-icons/md";
-import { StatCard } from "../../components/Admin/StatCard";
-import { socket } from "../../Services/Socket";
-import { playNotificationSound } from "../../Util/PlaySound";
-import { CardView } from "../../components/Client/CardView";
 
 export const DashBoardPage = () => {
   const [products, setProducts] = useState([]);
@@ -19,241 +21,200 @@ export const DashBoardPage = () => {
   const [todayOrders, setTodayOrders] = useState([]);
   const [SelingData, setSellingData] = useState([]);
 
-  // fetch All Products
   useEffect(() => {
     socket.emit("join-admin");
-    const fetchData = async () => {
+    const fetchProducts = async () => {
       try {
-        const responce = await PrivateAxios.get("/products");
-        if (responce.status !== 200) {
-          throw new Error({ message: "responce failed" });
-        }
-        setProducts(responce.data.data); // Set fetched data
+        const response = await PrivateAxios.get("/products");
+        setProducts(response.data.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching products:", error);
       }
     };
-    fetchData();
+    fetchProducts();
   }, []);
 
   useEffect(() => {
-    const fetchedBestSellingItem = async () => {
+    const fetchSellingData = async () => {
       const response = await PrivateAxios.get("/sales/best-selling-item");
       if (response.status === 200) {
         setSellingData(response.data.content);
       }
     };
-    fetchedBestSellingItem();
+    fetchSellingData();
   }, []);
 
-  const updatedSellingData = SelingData.map((item) => {
-    return {
-      ...item,
-      category: "Best-Selling", // ✅ Adds a new field
-      // or override nested field:
-      categoryId: {
-        ...item.categoryId,
-        name: "Best-Selling", // ✅ Updates the existing nested name
-      },
-    };
-  });
+  const updatedSellingData = SelingData.map((item) => ({
+    ...item,
+    category: "Best-Selling",
+    categoryId: { ...item.categoryId, name: "Best-Selling" },
+  }));
 
   const grouped = updatedSellingData.reduce((acc, item) => {
     const category = item.category || "Uncategorized";
-
-    if (!acc[category]) {
-      acc[category] = []; // ✅ Initialize array
-    }
-
-    acc[category].push(item); // ✅ Now safely push the item
-
-    return acc; // ✅ Don't forget to return accumulator
+    acc[category] = acc[category] || [];
+    acc[category].push(item);
+    return acc;
   }, {});
 
-  // Fetch All orders
   useEffect(() => {
     const controller = new AbortController();
 
-    const fetchOrder = async () => {
+    const fetchOrders = async () => {
       try {
         const response = await PrivateAxios.get("/orders/active-orders", {
           signal: controller.signal,
         });
-
-        if (response.status !== 200) {
-          throw new Error("Response failed");
-        }
-
         setAllOrders(response.data.content);
       } catch (err) {
         if (err.name !== "CanceledError") {
-          console.error("Fetching orders failed:", err);
+          console.error("Error fetching orders:", err);
         }
       }
     };
-    fetchOrder();
-    socket.emit("join-admin");
-    const handleOrderUpdate = (data) => {
+
+    fetchOrders();
+    socket.on("placed-order", () => {
       playNotificationSound();
-      fetchOrder();
-    };
-    socket.on("placed-order", handleOrderUpdate);
+      fetchOrders();
+    });
 
     return () => {
       controller.abort();
-      socket.off("placed-order", handleOrderUpdate); // Remove specific callback
+      socket.off("placed-order");
     };
   }, []);
 
-  // Fetch sale
   useEffect(() => {
     const controller = new AbortController();
-    const fetchedOrder = async () => {
-      const responce = await PrivateAxios.get("/sales", {
-        signal: controller.signal,
-      });
-      if (responce.status !== 200) {
-        throw new Error({ message: "responce failed" });
-      }
-      setAllSales(responce.data.content);
-    };
-    fetchedOrder();
-    return () => {
-      controller.abort();
-    };
-  }, []);
-
-  // fetch category
-  useEffect(() => {
-    const controller = new AbortController();
-    const fetchedOrder = async () => {
-      const responce = await publicAxios.get("/products/category", {
-        signal: controller.signal,
-      });
-      if (responce.status !== 200) {
-        throw new Error({ message: "responce failed" });
-      }
-      setAllCategory(responce.data.content);
-    };
-    fetchedOrder();
-    return () => {
-      controller.abort();
-    };
-  }, []);
-
-  useEffect(() => {
-    const fetchingTodayorders = async () => {
+    const fetchSales = async () => {
       try {
-        const todatOrders = await PrivateAxios.get("/orders/today-orders");
-        setTodayOrders(todatOrders.data.content);
-      } catch (error) {
-        throw new Error({ messsage: "Responce failed" });
+        const response = await PrivateAxios.get("/sales", {
+          signal: controller.signal,
+        });
+        setAllSales(response.data.content);
+      } catch (err) {
+        console.error("Error fetching sales:", err);
       }
     };
-    fetchingTodayorders();
+    fetchSales();
+    return () => controller.abort();
   }, []);
 
-  // Today ORders
+  useEffect(() => {
+    const controller = new AbortController();
+    const fetchCategories = async () => {
+      try {
+        const response = await publicAxios.get("/products/category", {
+          signal: controller.signal,
+        });
+        setAllCategory(response.data.content);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
+    };
+    fetchCategories();
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    const fetchTodayOrders = async () => {
+      try {
+        const response = await PrivateAxios.get("/orders/today-orders");
+        setTodayOrders(response.data.content);
+      } catch (error) {
+        console.error("Error fetching today's orders:", error);
+      }
+    };
+    fetchTodayOrders();
+  }, []);
+
   const today = new Date().toISOString().split("T")[0];
-  const todaysOrders = todayOrders.filter((order) => {
-    const orderDate = new Date(order.placedAt).toISOString().split("T")[0];
-    return orderDate === today;
-  });
+  const todaysOrders = todayOrders.filter(
+    (order) => new Date(order.placedAt).toISOString().split("T")[0] === today
+  );
 
-  const categorywise = todaysOrders?.reduce((acc, item) => {
-    const orderStatus = item.status;
-
-    if (!acc[orderStatus]) {
-      acc[orderStatus] = [];
-    }
-
-    acc[orderStatus].push(item);
+  const categorywise = todaysOrders.reduce((acc, item) => {
+    const status = item.status;
+    acc[status] = acc[status] || [];
+    acc[status].push(item);
     return acc;
   }, {});
 
-  // Pending Orders
-  const pendingOrders = AllOrders.filter(
-    (order) => order.status === "pending" || order.status === "processing"
+  const pendingOrders = AllOrders.filter((order) =>
+    ["pending", "processing"].includes(order.status)
   );
 
-  // set deta According category
   const groupedProducts = products.reduce((acc, product) => {
-    const categoryName = product.categoryId?.name || "Uncategorized";
-    if (!acc[categoryName]) {
-      acc[categoryName] = [];
-    }
-    acc[categoryName].push(product);
+    const category = product.categoryId?.name || "Uncategorized";
+    acc[category] = acc[category] || [];
+    acc[category].push(product);
     return acc;
   }, {});
 
   return (
-    <div className="w-[100%] min-w-[375px] relative">
-      <div>
-        <img
-          src="/assets/image1.jpg"
-          alt="logo"
-          className="w-full h-full object-cover min-w-[100%] max-h-[250px]"
-        ></img>
-      </div>
+    <div className="min-w-[375px] h-auto">
+      <img
+        src="/assets/image1.jpg"
+        alt="logo"
+        className="w-full object-cover max-h-[250px]"
+      />
 
-      <div className="mt-[20px] grid mb-4 grid-cols-2  md:grid-cols-4  sm:gap-6">
+      <div className="w-[98%] grid grid-cols-2 md:grid-cols-4 sm:gap-6 mt-5 mb-4 mx-auto relative">
         <StatCard
-          name={"Today Orders"}
+          name="Today Orders"
           value={todaysOrders}
           imageName={<BsBoxArrowInUp size={40} />}
-          route={"/admin/today-orders"}
+          route="/admin/today-orders"
           items={categorywise}
         />
         <StatCard
-          name={"Pending Orders"}
+          name="Pending Orders"
           value={pendingOrders}
           imageName={<BsBoxArrowInDownLeft size={40} />}
-          route={"/admin/pending-orders"}
+          route="/admin/pending-orders"
         />
         <StatCard
-          name={"Total Sale"}
-          value={AllSales ? AllSales : 0}
+          name="Total Sale"
+          value={AllSales || 0}
           imageName={<MdAttachMoney size={40} />}
-          route={"/admin/totelsale"}
+          route="/admin/totelsale"
         />
         <StatCard
-          name={"Total Category"}
-          value={AllCategory ? AllCategory : 0}
+          name="Total Category"
+          value={AllCategory || 0}
           imageName={<TbCategoryPlus size={40} />}
-          route={"/admin/Category"}
+          route="/admin/Category"
         />
       </div>
 
-      {/* <Link to={'/admin/data-visualize'}>
-                <h2 className='flex flex-row text-center bg-green-200 h-9 justify-center items-center'>Graphical Persentation</h2>
-            </Link> */}
-
       <CardView
         products={grouped}
-        hideAddToCard={true}
-        cardCss={"h-[250px] my-4"}
+        hideAddToCard
+        cardCss="h-[250px]"
+        css=" h-auto"
       />
-
       <CardView
         products={groupedProducts}
-        hideAddToCard={true}
-        cardCss={"h-[261px]"}
-        css={"category-section mb-4 h-[250px]"}
+        hideAddToCard
+        cardCss="h-[261px]"
+        css=" h-auto"
       />
 
-      {/* Admin Actions - naturally placed at the bottom of content */}
-      <div className="fixed top-[85%] left-0 right-0  w-[98%] mx-auto mt-0 mb-0 bg-blend-saturation">
-        <div className="min-w-[343px] gap-[8px] lg:w-[99%] overflow-hidden flex flex-col">
-          <div className="w-full bg-[#F9D718] h-[48px] text-center p-1 rounded">
-            <Link to="/admin/createProduct" className="font-semibold">
-              Create New Item
-            </Link>
-          </div>
-          <div className="w-full h-[48px] text-center p-2 rounded bg-gray-200 mt-1">
-            <Link to="/admin/category" className="font-semibold">
-              Create New Category
-            </Link>
-          </div>
+      <div className=" sticky bottom-0 left-0 right-0  ">
+        <div className="min-w-[343px] lg:w-[98%] mx-auto flex flex-col">
+          <Link
+            to="/admin/createProduct"
+            className="bg-[#F9D718] h-[48px] p-1 text-center rounded font-semibold"
+          >
+            Create New Item
+          </Link>
+          <Link
+            to="/admin/category"
+            className="bg-gray-200 mt-1 h-[48px] p-2 text-center rounded font-semibold"
+          >
+            Create New Category
+          </Link>
         </div>
       </div>
     </div>

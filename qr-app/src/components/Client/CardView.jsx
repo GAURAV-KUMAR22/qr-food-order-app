@@ -12,10 +12,9 @@ export const CardView = ({
   css,
 }) => {
   return (
-    <div className={`${css} my-5 capitalize`}  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-
-      {Object.keys(products)?.map((categoryName) => (
-        <div key={categoryName} className="category-section">
+    <div className={`${css} capitalize mb-3`}>
+      {Object.keys(products || {})?.map((categoryName) => (
+        <div key={categoryName}>
           <div className="flex justify-between px-4 py-2">
             <h2 className="text-sm font-semibold">{categoryName}</h2>
             <Link
@@ -27,12 +26,12 @@ export const CardView = ({
             </Link>
           </div>
 
-          <div className="flex overflow-x-auto space-x-4 px-4 scrollbar-hide">
-            {products[categoryName]?.map((product) => (
-              <div
-                key={product._id}
-                className="min-w-[150px] h-[280px] flex-shrink-0"
-              >
+          <div
+            className="flex overflow-x-auto space-x-4 px-4"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {(products[categoryName] || []).map((product) => (
+              <div key={product._id} className="min-w-[150px] flex-shrink-0">
                 <CardDetails
                   id={product._id}
                   category={product.categoryId?.name}
@@ -41,12 +40,12 @@ export const CardView = ({
                   image={product.imageUrl}
                   product={product}
                   button={hideAddToCard}
-                  css={cardCss}
+                  CardCss={cardCss}
                   stock={product.quantity ?? 0}
                   fixedStock={product.totelQuantity ?? 0}
                   data={product}
                   onAddToCart={addToCarts}
-                  ratingValue={product.rating ?? 0}
+                  ratingValue={product.averageRating ?? 0}
                 />
               </div>
             ))}

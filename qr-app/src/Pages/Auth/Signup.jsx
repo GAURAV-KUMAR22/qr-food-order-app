@@ -63,7 +63,7 @@ export const Signup = () => {
         </h2>
         <form
           onSubmit={handleForm}
-          className="w-[98%] flex flex-col text-center justify-center shadow-md rounded-md mx-auto"
+          className="w-full sm:w-full md:w-[50%] lg:w-[40%] m-3 shadow-md rounded-md flex flex-col justify-center"
         >
           <div className="flex flex-col">
             <input

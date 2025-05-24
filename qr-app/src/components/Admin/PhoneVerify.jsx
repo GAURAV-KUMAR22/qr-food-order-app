@@ -13,7 +13,7 @@ export const PhoneVerify = ({ phone, setPhone, code, setCode, onVerified }) => {
         auth,
         "recaptcha-container",
         {
-          size: "normal",
+          size: "invisible",
           callback: () => {
             // reCAPTCHA solved - maybe auto-send OTP
           },
