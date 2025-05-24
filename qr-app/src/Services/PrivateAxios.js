@@ -12,7 +12,7 @@ const PrivateAxios = axios.create({
   withCredentials: true, // ✅ Required for sending cookies with requests
 });
 
-PrivateAxios.interceptors.response.use(
+PrivateAxios.interceptors.request.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
