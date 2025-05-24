@@ -12,6 +12,7 @@ export const TotalSale = () => {
   const [todaySaleItem, setSaleToday] = useState([]);
   const [todayTotelRevenue, setTodayTotelRevenue] = useState(0);
   const [ShowFilter, setShowFilter] = useState(false);
+  const [todaySaleAmount, SetTodaySale] = useState();
 
   async function onFilter(query) {
     try {
@@ -34,6 +35,17 @@ export const TotalSale = () => {
     }
   }
 
+  useEffect(() => {
+    async function fetched() {
+      const res = await PrivateAxios.get("/sales/totelSale");
+      if (res.status === 200) {
+        console.log(res.data.content[0].totalRevenue);
+        SetTodaySale(res.data.content[0].totalRevenue);
+      }
+    }
+    fetched();
+  }, []);
+
   // Calculate total sale
   const totalSale = salesData.reduce(
     (acc, item) => acc + (item.totelRevenue || 0),
@@ -49,7 +61,7 @@ export const TotalSale = () => {
     });
     setSaleToday(todaySales);
   }, [salesData]);
-
+  console.log(salesData);
   // Calculate today's total revenue
   useEffect(() => {
     const todayRevenue = todaySaleItem.reduce(
@@ -93,7 +105,14 @@ export const TotalSale = () => {
             </h2>
           </div>
         ) : (
-          <h1 className="text-center text-2xl text-red-500">Select Filter</h1>
+          todaySaleAmount && (
+            <div className="w-full bg-green-200 h-[50%] mb-2 flex flex-col justify-center">
+              <h2 className="text-2xl font-semibold text-center">Today Sale</h2>
+              <h2 className="text-xl font-bold text-center mt-2">
+                ₹ {todaySaleAmount || 0}
+              </h2>
+            </div>
+          )
         )}
       </div>
     </div>
