@@ -39,7 +39,6 @@ export const CardView = ({
                   price={product.price}
                   image={product.imageUrl}
                   product={product}
-                  button={hideAddToCard}
                   CardCss={cardCss}
                   stock={product.quantity ?? 0}
                   fixedStock={product.totelQuantity ?? 0}
