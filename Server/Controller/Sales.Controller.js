@@ -97,7 +97,7 @@ export const getAllSales = async (req, res) => {
       return res.status(404).json({ message: "No sales records found" });
     }
 
-    return res.status(200).json({ content: salesData });
+    res.status(200).json({ content: salesData });
   } catch (error) {
     console.error("Error fetching sales:", error);
     return res.status(500).json({ message: "Internal Server error" });
@@ -125,6 +125,38 @@ export const getBestSellingItem = async (req, res) => {
     }).populate("categoryId");
 
     res.status(200).json({ content: products });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getTotelSale = async (req, res) => {
+  try {
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0); // 00:00:00.000
+
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999); // 23:59:59.999
+
+    const todaySales = await Sales.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: startOfToday,
+            $lte: endOfToday,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$totelRevenue" },
+          totalOrders: { $sum: 1 },
+        },
+      },
+    ]);
+
+    return res.status(200).json({ content: todaySales });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
   }

@@ -25,7 +25,7 @@ export const Category = () => {
       : import.meta.env.VITE_BACKEND_DEV;
   return (
     <div className="w-full">
-      <div className="flex text-left p-4 ">
+      <div className="mb-5 ">
         <ReverseButton routeName={"Category"} route={"/admin"} />
       </div>
 
