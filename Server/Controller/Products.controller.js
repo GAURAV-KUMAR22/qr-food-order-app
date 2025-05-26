@@ -169,37 +169,34 @@ export const deleteProduct = async (req, res) => {
 };
 
 export const postRating = async (req, res) => {
-  const { rating, productId, userId } = req.body;
-
-  const calculateAndUpdateAverageRating = async () => {
-    const allRatings = await Rating.find({ productId });
-    const totalRatings = allRatings.length;
-    const averageRating =
-      allRatings.reduce((acc, curr) => acc + curr.rating, 0) / totalRatings;
-
-    await Product.findByIdAndUpdate(productId, {
-      averageRating: averageRating.toFixed(1),
-      totalRatings,
-    });
-  };
-
+  const { rating, productIds, userId, feedback } = req.body;
   try {
-    const existingRating = await Rating.findOne({ userId, productId });
+    for (const productId of productIds) {
+      const existingRating = await Rating.findOne({ userId, productId });
 
-    if (existingRating) {
-      existingRating.rating = rating;
-      await existingRating.save();
-      await calculateAndUpdateAverageRating();
+      if (existingRating) {
+        existingRating.rating = rating;
+        await existingRating.save();
+      } else {
+        const newRating = new Rating({ userId, productId, rating, feedback });
+        await newRating.save();
+      }
 
-      return res.status(200).json({ message: "Rating updated successfully" });
+      // Recalculate average after each rating
+      const allRatings = await Rating.find({ productId });
+      const totalRatings = allRatings.length;
+      const averageRating =
+        allRatings.reduce((acc, curr) => acc + curr.rating, 0) / totalRatings;
+
+      await Product.findByIdAndUpdate(productId, {
+        averageRating: averageRating.toFixed(1),
+        totalRatings,
+      });
     }
 
-    const newRating = new Rating({ userId, productId, rating });
-    await newRating.save();
-    await calculateAndUpdateAverageRating();
-
-    res.status(201).json({ message: "Rating added successfully" });
+    res.status(200).json({ message: "Ratings processed successfully" });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Internal Server Error", error });
   }
 };

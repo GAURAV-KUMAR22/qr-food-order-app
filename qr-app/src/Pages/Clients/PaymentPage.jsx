@@ -74,6 +74,14 @@ export const PaymentPage = () => {
     }
   };
 
+  // useEffect(() => {
+  //   if (loading === "true") {
+  //     setTimeout(() => {
+  //       <p>failed order</p>;
+  //     }, 2000);
+  //   }
+  // }, []);
+
   return (
     <div className="">
       {/* Back to user details link */}

@@ -15,6 +15,9 @@ const ratingSchema = mongoose.Schema({
     min: 1,
     max: 5,
   },
+  feedback: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

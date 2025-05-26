@@ -205,13 +205,13 @@ export const DashBoardPage = () => {
         <div className="min-w-[343px] lg:w-[98%] mx-auto flex flex-col">
           <Link
             to="/admin/createProduct"
-            className="bg-[#F9D718] h-[48px] p-1 text-center rounded font-semibold"
+            className="bg-[#F9D718] h-[48px] p-1 text-center rounded font-semibold flex justify-center items-center"
           >
             Create New Item
           </Link>
           <Link
             to="/admin/category"
-            className="bg-gray-200 mt-1 h-[48px] p-2 text-center rounded font-semibold"
+            className="bg-gray-200 mt-1 h-[48px] p-2 text-center rounded font-semibold flex justify-center items-center"
           >
             Create New Category
           </Link>

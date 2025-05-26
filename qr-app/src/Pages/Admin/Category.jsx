@@ -5,6 +5,7 @@ import { ReverseButton } from "../../components/Client/ReverseButton";
 
 export const Category = () => {
   const [category, setCategory] = useState([]);
+
   useEffect(() => {
     const controller = new AbortController();
     async function fetched() {

@@ -39,13 +39,9 @@ function App() {
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    const handleConnect = () => {
-      console.log("Connected to socket server");
-    };
+    const handleConnect = () => {};
 
-    const handleDisconnect = () => {
-      console.log("Disconnected from socket server");
-    };
+    const handleDisconnect = () => {};
 
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);

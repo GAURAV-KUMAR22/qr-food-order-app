@@ -42,18 +42,18 @@ export const CardDetails = ({
     stockTag = "InStock";
   }
 
-  async function ratingChanged(newRating) {
-    try {
-      const userId = JSON.parse(localStorage.getItem("user"));
-      const response = await publicAxios.post("/products/rating", {
-        productId: id,
-        userId: userId._id,
-        rating: newRating,
-      });
-    } catch (error) {
-      console.error("Rating failed:", error);
-    }
-  }
+  // async function ratingChanged(newRating) {
+  //   try {
+  //     const userId = JSON.parse(localStorage.getItem("user"));
+  //     const response = await publicAxios.post("/products/rating", {
+  //       productId: id,
+  //       userId: userId._id,
+  //       rating: newRating,
+  //     });
+  //   } catch (error) {
+  //     console.error("Rating failed:", error);
+  //   }
+  // }
 
   return (
     <div
@@ -85,7 +85,7 @@ export const CardDetails = ({
         <img
           src={`${backendUrl}/${image}`}
           alt={dishName}
-          className="w-[80px] h-[80px] object-cover rounded-full"
+          className="w-[60px] h-[60px] object-cover rounded-full"
         />
         <Link to={`/product/${id}`} state={{ product }}>
           <h3 className="text-sm font-medium tracking-tighter mt-2 text-center capitalize">
@@ -95,17 +95,17 @@ export const CardDetails = ({
             Rs. {price}/-
           </p>
         </Link>
-        <StarIcons
-          count={5}
-          onChange={ratingChanged}
-          size={20}
-          isHalf={true}
-          emptyIcon={<i className="far fa-star"></i>}
-          halfIcon={<i className="fa fa-star-half-alt"></i>}
-          fullIcon={<i className="fa fa-star"></i>}
-          activeColor="#ffd700"
-          value={ratingValue}
-        />
+        <div className="hover:not-autofill:">
+          <StarIcons
+            count={5}
+            size={20}
+            isHalf={true}
+            emptyIcon={<i className="far fa-star"></i>}
+            halfIcon={<i className="fa fa-star-half-alt hover:disabled:"></i>}
+            fullIcon={<i className="fa fa-star star-icon hover:disabled:"></i>}
+            value={ratingValue}
+          />
+        </div>
       </div>
 
       {/* Button section */}
