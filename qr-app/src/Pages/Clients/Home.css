@@ -351,3 +351,8 @@
   justify-content: center;
   display: flex;
 }
+
+.star-icon:hover {
+  color: inherit !important;
+  transform: none !important;
+}

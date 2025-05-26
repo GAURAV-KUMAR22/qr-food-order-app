@@ -3,11 +3,19 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import publicAxios from "../../Services/PublicAxios";
 import { socket } from "../../Services/Socket";
+
+import StarIcons from "react-rating-stars-component";
 import { MdExpandCircleDown } from "react-icons/md";
+import { TbInputSpark } from "react-icons/tb";
+import ErrorBoundary from "../../Util/ErrorBoundry";
 
 export const OrderSuccess = () => {
   const [orders, setOrder] = useState(null);
   const [user, setUser] = useState([]);
+  const [feedBackForm, setFeedBackForm] = useState(false);
+  const [feedBackInput, setFeedBackInput] = useState("");
+  const [retingValue, setRetingValue] = useState();
+  const [isOpen, setIsOpen] = useState(false);
   const [showOlderOrders, setShowOlderOrders] = useState(false); // state to control showing older orders
 
   async function fetched(userId) {
@@ -24,6 +32,7 @@ export const OrderSuccess = () => {
   }
 
   useEffect(() => {
+    setIsOpen(true);
     const storedUser = localStorage.getItem("user");
     const existingUser = storedUser ? JSON.parse(storedUser) : null;
 
@@ -47,6 +56,33 @@ export const OrderSuccess = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  async function ratingChanged(newRating) {
+    setRetingValue(newRating);
+  }
+
+  async function handleFeedBack(newRating) {
+    const productIdsMap =
+      incompleteOrders?.flatMap(
+        (order) => order.items?.map((item) => item.productId._id) || []
+      ) || [];
+
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user?._id) throw new Error("User not logged in");
+
+      const response = await publicAxios.post("/products/rating", {
+        productIds: productIdsMap,
+        userId: user._id,
+        rating: retingValue,
+        feedback: feedBackInput,
+      });
+
+      setIsOpen(close);
+    } catch (error) {
+      console.error("Rating failed:", error);
+    }
+  }
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -76,6 +112,62 @@ export const OrderSuccess = () => {
 
   return (
     <div className="w-[98%] mx-auto flex flex-col items-center justify-center bg-green-50 p-4">
+      <ErrorBoundary>
+        {isOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs bg-opacity-50">
+            <div className="w-[95%] max-w-md rounded-lg p-6 text-center bg-white shadow-xl relative">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-2xl font-bold"
+              >
+                &times;
+              </button>
+
+              <div className="mb-4">
+                <h1 className="text-2xl font-semibold text-green-600">
+                  Please Review Us
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  Let us know how the food and service were.
+                </p>
+              </div>
+
+              <div className="flex flex-col justify-center items-center mb-4">
+                <p className="text-sm font-medium mb-2">
+                  How much would you like to rate us?
+                </p>
+                <StarIcons
+                  count={5}
+                  onChange={ratingChanged}
+                  size={50}
+                  isHalf={true}
+                  emptyIcon={<i className="far fa-star" />}
+                  halfIcon={<i className="fa fa-star-half-alt" />}
+                  fullIcon={<i className="fa fa-star" />}
+                  activeColor="#ffd700"
+                />
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <textarea
+                  name="feedback"
+                  rows="4"
+                  placeholder="Write something..."
+                  className="border border-gray-300 rounded-md p-2 resize-none focus:outline-none focus:ring-2 focus:ring-green-400"
+                  onChange={(e) => setFeedBackInput(e.target.value)}
+                />
+                <button
+                  className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition duration-300"
+                  onClick={handleFeedBack}
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </ErrorBoundary>
+
       {user && Array.isArray(orders) && orders.length > 0 ? (
         <div className="space-y-4">
           {/* Display Incomplete Orders (Default) */}

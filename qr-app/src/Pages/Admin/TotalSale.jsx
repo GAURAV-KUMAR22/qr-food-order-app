@@ -39,7 +39,6 @@ export const TotalSale = () => {
     async function fetched() {
       const res = await PrivateAxios.get("/sales/totelSale");
       if (res.status === 200) {
-        console.log(res.data.content[0].totalRevenue);
         SetTodaySale(res.data.content[0].totalRevenue);
       }
     }
@@ -61,7 +60,6 @@ export const TotalSale = () => {
     });
     setSaleToday(todaySales);
   }, [salesData]);
-  console.log(salesData);
   // Calculate today's total revenue
   useEffect(() => {
     const todayRevenue = todaySaleItem.reduce(

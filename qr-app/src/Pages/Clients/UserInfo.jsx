@@ -23,8 +23,8 @@ export const UserInfo = () => {
     table: user?.table || "",
   });
   const [isEditMode, setIsEditMode] = useState(!user);
-  const [phone, setPhone] = useState();
-  const [code, setCode] = useState();
+  // const [phone, setPhone] = useState();
+  // const [code, setCode] = useState();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,8 +46,7 @@ export const UserInfo = () => {
       Number(form.phone) <= 0 ||
       phoneStr.length < 10
     ) {
-      formError.phone =
-        "Phone must be a positive number with at least 10 digits";
+      formError.phone = "Phone must be at least 10 digits";
     }
     if (!form.table || isNaN(form.table) || Number(form.table) <= 0) {
       formError.table = "Table must be a positive number";
@@ -100,6 +99,11 @@ export const UserInfo = () => {
     }
   }
 
+  if (cartItems.length == 0) {
+    navigate("/");
+    return null;
+  }
+
   return (
     <div className="mx-2">
       <div className="w-[100%] h-[58px] flex items-center">
@@ -128,7 +132,7 @@ export const UserInfo = () => {
             {error.name && (
               <p className="text-red-800 w-[98%] mx-auto">{error.name}</p>
             )}
-            <ErrorBoundary>
+            {/* <ErrorBoundary>
               <PhoneVerify
                 phone={phone}
                 setPhone={setPhone}
@@ -136,7 +140,22 @@ export const UserInfo = () => {
                 setCode={setCode}
                 onVerified={() => setForm((prev) => ({ ...prev, phone }))}
               />
-            </ErrorBoundary>
+            </ErrorBoundary> */}
+            <label htmlFor="name" className="text-xl font-semibold ml-1 mb-1">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Enter Your Number"
+              required
+              onChange={handleChange}
+              value={form.phone}
+              className="w-full h-10 border rounded-md pl-1 border-gray-500"
+            />
+            {error.phone && (
+              <p className="text-red-800 w-[98%] mx-auto">{error.phone}</p>
+            )}
 
             <label
               htmlFor="table"

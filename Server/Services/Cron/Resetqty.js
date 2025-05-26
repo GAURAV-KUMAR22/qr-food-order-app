@@ -14,8 +14,6 @@ cron.schedule("3 23 * * *", async () => {
         await product.save();
       }
     }
-
-    console.log("✅ All product quantities have been reset successfully!");
   } catch (err) {
     console.error("❌ Error while resetting product quantities:", err.message);
   }

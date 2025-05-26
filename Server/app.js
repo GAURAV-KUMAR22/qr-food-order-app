@@ -56,13 +56,7 @@ app.use(
 );
 
 const server = createServer(app);
-console.log("MODE:", process.env.MODE);
-console.log(
-  "url:",
-  process.env.MODE === "Production"
-    ? process.env.FRONTEND_PROD
-    : process.env.FRONTEND_DEV
-);
+
 const io = new Server(server, {
   cors: {
     origin:

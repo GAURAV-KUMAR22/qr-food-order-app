@@ -65,14 +65,16 @@ export const TodayOrderStat = () => {
                         {new Date(order.placedAt).toLocaleString()}
                       </td>
                       <td className="py-2 px-4 border-b">
-                        <ul className="list-disc pl-4 text-sm text-gray-700">
-                          {order.items?.map((item, idx) => (
-                            <li key={idx}>
-                              {item.productId.name} — ₹{item.price} ×{" "}
-                              {item.quantity}
-                            </li>
-                          ))}
-                        </ul>
+                        <details>
+                          <ul className="list-disc pl-4 text-sm text-gray-700">
+                            {order.items?.map((item, idx) => (
+                              <li key={idx}>
+                                {item.productId.name} — ₹{item.price} ×{" "}
+                                {item.quantity}
+                              </li>
+                            ))}
+                          </ul>
+                        </details>
                       </td>
                     </tr>
                   ))}

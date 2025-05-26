@@ -67,7 +67,7 @@ export const OrderUpdate = () => {
 
   return (
     <div className="w-full h-screen ">
-      <div className="flex text-left px-2 pb-2">
+      <div className=" mb-5">
         <ReverseButton routeName={"Admin"} route={"/admin"} />
       </div>
       {filterdPendingOrders.length > 0 ? (
