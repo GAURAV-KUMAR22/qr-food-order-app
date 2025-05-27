@@ -40,13 +40,11 @@ export const UserInfo = () => {
       formError.name = "Name field is required";
     }
     const phoneStr = String(form.phone);
-    if (
-      !form.phone ||
-      isNaN(form.phone) ||
-      Number(form.phone) <= 0 ||
-      phoneStr.length < 10
-    ) {
-      formError.phone = "Phone must be at least 10 digits";
+
+    const phoneRegex = /^[0-9]{10}$/;
+
+    if (!form.phone || !phoneRegex.test(form.phone)) {
+      formError.phone = "Phone number must be exactly 10 digits";
     }
     if (!form.table || isNaN(form.table) || Number(form.table) <= 0) {
       formError.table = "Table must be a positive number";

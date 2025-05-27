@@ -103,12 +103,15 @@ export const OrderSuccess = () => {
   }, [orders]);
 
   // Filter orders based on status
-  const incompleteOrders = orders?.filter(
-    (order) => order.status !== "delivered" && order.status !== "cancelled"
-  );
-  const completedOrders = orders?.filter(
-    (order) => order.status === "delivered"
-  );
+  const incompleteOrders = orders
+    ?.filter(
+      (order) => order.status !== "delivered" && order.status !== "cancelled"
+    )
+    .sort((a, b) => new Date(b.placedAt) - new Date(a.placedAt));
+
+  const completedOrders = orders
+    ?.filter((order) => order.status === "delivered")
+    .sort((a, b) => new Date(b.placedAt) - new Date(a.placedAt));
 
   return (
     <div className="w-[98%] mx-auto flex flex-col items-center justify-center bg-green-50 p-4">
@@ -204,7 +207,9 @@ export const OrderSuccess = () => {
                   <div className="mt-4 space-y-2">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       <p>
-                        <span className="font-medium">Customer:</span>{" "}
+                        <span className="font-medium capitalize">
+                          Customer:
+                        </span>{" "}
                         {order.userId?.name}
                       </p>
                       <p>
@@ -212,7 +217,7 @@ export const OrderSuccess = () => {
                         {order.userId?.phone}
                       </p>
                       <p>
-                        <span className="font-medium">Status:</span>{" "}
+                        <span className="font-medium capitalize">Status:</span>{" "}
                         {order.status}
                       </p>
                       <p>
@@ -230,9 +235,13 @@ export const OrderSuccess = () => {
                         <span className="font-medium">Delivery Charge:</span> ₹
                         {order.deliveryCharge}
                       </p>
+                      <p>
+                        <span className="font-medium">Table:</span>
+                        {order.userId?.table}
+                      </p>
                     </div>
 
-                    <div className="mt-4">
+                    <div className="mt-4 capitalize">
                       <p className="font-medium mb-2">Items:</p>
                       <ul className="list-disc pl-6 space-y-1">
                         {order.items?.map((item, idx) => (

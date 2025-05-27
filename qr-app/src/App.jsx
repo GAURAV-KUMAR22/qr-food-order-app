@@ -53,7 +53,7 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <div className="box-border">
       <QrCode
         value="https://food-order-app-1-jddi.onrender.com/"
         className="hidden"
@@ -101,7 +101,7 @@ function App() {
           <Route path="/order-success" element={<OrderSuccess />} />
 
           {/* Admin Protected Routes */}
-          <Route path="/" element={<ProtectedRoutes />}>
+          <Route path="/" element={<ProtectedRoutes />} className="box-border">
             <Route index path="/admin" element={<DashBoardPage />} />
             <Route path="/admin/createProduct" element={<NewProduct />} />
             <Route path="/admin/Category" element={<Category />} />
