@@ -231,13 +231,13 @@ export const Home = () => {
     >
       {/* Cover Image */}
 
-      <button onClick={handleAdminAccess} className="w-full ">
+      <div className="w-full ">
         <img
           src="/assets/cover.png"
           alt="coverimage"
           className="w-full h-full object-cover min-w-[100%] max-h-[500px]"
         />
-      </button>
+      </div>
 
       {/* Show popup If User Logged In */}
       {user && (
