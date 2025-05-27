@@ -29,21 +29,6 @@ export const Home = () => {
   const [SelingData, setSellingData] = useState([]);
   const navigate = useNavigate();
   // eslint-disable-next-line no-unused-vars
-  const [clickCount, setClickCount] = useState(0);
-
-  // Get admin access
-  const handleAdminAccess = () => {
-    setClickCount((prev) => {
-      const newCount = prev + 1;
-      if (newCount === 10) {
-        toast.success("Admin panel");
-        navigate("/signup");
-        return 0;
-      }
-
-      return newCount;
-    });
-  };
 
   // Fetch Best Selling Item
   useEffect(() => {
