@@ -103,10 +103,10 @@ export const CartPage = () => {
                       className="flex justify-between items-center rounded-xl shadow mb-4 p-1"
                     >
                       <div className="font-bold text-xl space-y-1">
-                        <h4 className="inline text-base font-semibold">
+                        <h4 className="inline text-base font-semibold capitalize">
                           {item.name}
                         </h4>
-                        <p className="text-sm font-semibold text-gray-600 mb-4">
+                        <p className="text-sm font-semibold text-gray-600 mb-4 capitalize">
                           {item.description}
                         </p>
                         <b className="text-black mt-[20px] font-bold">
@@ -165,7 +165,7 @@ export const CartPage = () => {
                 <b>0%</b>
               </div>
               <div>
-                <p>Texex</p>
+                <p>Tex</p>
                 <b>0%</b>
               </div>
               <div>
