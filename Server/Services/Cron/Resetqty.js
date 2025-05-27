@@ -1,19 +1,22 @@
 import cron from "node-cron";
 import Product from "../../Model/Product.model.js";
 
-// Run every day at midnight (00:00)
-cron.schedule("3 23 * * *", async () => {
+// Reset every day at 12:18 PM (or adjust time)
+cron.schedule("0 0 * * *", async () => {
   try {
-    // Fetch all products
     const products = await Product.find();
-
-    // Loop through each product and reset its quantity to totelQuantity
     for (const product of products) {
+      console.log(product);
       if (typeof product.totelQuantity === "number") {
+        console.log(
+          `Resetting product ${product._id}: ${product.quantity} → ${product.totalQuantity}`
+        );
         product.quantity = product.totelQuantity;
         await product.save();
       }
     }
+
+    console.log("✅ Product quantities reset successfully.");
   } catch (err) {
     console.error("❌ Error while resetting product quantities:", err.message);
   }
